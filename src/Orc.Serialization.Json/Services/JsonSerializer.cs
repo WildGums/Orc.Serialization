@@ -13,6 +13,9 @@
             _options = new JsonSerializerOptions
             {
                 IncludeFields = settings.IncludeFields,
+                MaxDepth = settings.MaxDepth,
+                WriteIndented = settings.WriteIndented,
+                PropertyNameCaseInsensitive = settings.PropertyNameCaseInsensitive,
             };
         }
 
