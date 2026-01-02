@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using PublicApiGenerator;
 using VerifyNUnit;
-using Views;
 
 [TestFixture]
 public class PublicApiFacts
@@ -14,7 +13,7 @@ public class PublicApiFacts
     [Test, MethodImpl(MethodImplOptions.NoInlining)]
     public async Task Orc_Serialization_Json_HasNoBreakingChanges_Async()
     {
-        var assembly = typeof(JsonSerializationFactory).Assembly;
+        var assembly = typeof(JsonSerializerFactory).Assembly;
 
         await PublicApiApprover.ApprovePublicApiAsync(assembly);
     }

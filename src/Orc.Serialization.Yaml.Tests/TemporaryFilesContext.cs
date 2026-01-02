@@ -7,17 +7,10 @@ using Catel.Reflection;
 
 public sealed class TemporaryFilesContext : IDisposable
 {
-    #region Constants
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-    #endregion
-
-    #region Fields
     private readonly Guid _randomGuid = Guid.NewGuid();
     private readonly string _rootDirectory;
     private readonly bool _cleanUp;
-    #endregion
 
-    #region Constructors
     public TemporaryFilesContext(string name = null, bool cleanUp = true)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -31,9 +24,7 @@ public sealed class TemporaryFilesContext : IDisposable
 
         Directory.CreateDirectory(_rootDirectory);
     }
-    #endregion
 
-    #region IDisposable Members
     /// <summary>
     /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
     /// </summary>
@@ -44,7 +35,7 @@ public sealed class TemporaryFilesContext : IDisposable
             return;
         }
 
-        Log.Info("Deleting temporary files from '{0}'", _rootDirectory);
+        //Log.Info("Deleting temporary files from '{0}'", _rootDirectory);
 
         try
         {
@@ -53,14 +44,12 @@ public sealed class TemporaryFilesContext : IDisposable
                 Directory.Delete(_rootDirectory, true);
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Log.Error(ex, "Failed to delete temporary files");
+            //Log.Error(ex, "Failed to delete temporary files");
         }
     }
-    #endregion
 
-    #region Methods
     public string GetDirectory(string relativeDirectoryName)
     {
         var fullPath = Path.Combine(_rootDirectory, relativeDirectoryName);
@@ -93,5 +82,4 @@ public sealed class TemporaryFilesContext : IDisposable
 
         return fullPath;
     }
-    #endregion
 }

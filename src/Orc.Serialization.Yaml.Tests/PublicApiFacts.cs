@@ -4,9 +4,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using Orc.Serialization.Yaml;
 using PublicApiGenerator;
 using VerifyNUnit;
-using Views;
 
 [TestFixture]
 public class PublicApiFacts
@@ -14,7 +14,7 @@ public class PublicApiFacts
     [Test, MethodImpl(MethodImplOptions.NoInlining)]
     public async Task Orc_Serialization_Yaml_HasNoBreakingChanges_Async()
     {
-        var assembly = typeof(YamlSerializationFactory).Assembly;
+        var assembly = typeof(YamlSerializerFactory).Assembly;
 
         await PublicApiApprover.ApprovePublicApiAsync(assembly);
     }
