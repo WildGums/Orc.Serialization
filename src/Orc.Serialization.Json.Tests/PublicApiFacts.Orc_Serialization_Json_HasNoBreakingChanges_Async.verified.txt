@@ -1,0 +1,48 @@
+﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v10.0", FrameworkDisplayName=".NET 10.0")]
+public static class ModuleInitializer
+{
+    [System.Runtime.CompilerServices.ModuleInitializer]
+    public static void Initialize() { }
+}
+namespace Orc.Serialization.Json
+{
+    public interface IJsonSerializer
+    {
+        object? Deserialize(System.IO.Stream stream, System.Type targetType);
+        void Serialize(System.IO.Stream stream, object obj);
+    }
+    public static class IJsonSerializerExtensions
+    {
+        public static T? Deserialize<T>(this Orc.Serialization.Json.IJsonSerializer jsonSerializer, System.IO.Stream stream) { }
+    }
+    public interface IJsonSerializerFactory
+    {
+        Orc.Serialization.Json.IJsonSerializer CreateSerializer();
+        Orc.Serialization.Json.IJsonSerializer CreateSerializer(Orc.Serialization.Json.JsonSerializerSettings settings);
+    }
+    public class JsonSerializer : Orc.Serialization.Json.IJsonSerializer
+    {
+        public JsonSerializer(Orc.Serialization.Json.JsonSerializerSettings settings) { }
+        public object? Deserialize(System.IO.Stream stream, System.Type targetType) { }
+        public void Serialize(System.IO.Stream stream, object obj) { }
+    }
+    public class JsonSerializerFactory : Orc.Serialization.Json.IJsonSerializerFactory
+    {
+        public JsonSerializerFactory() { }
+        public Orc.Serialization.Json.IJsonSerializer CreateSerializer() { }
+        public Orc.Serialization.Json.IJsonSerializer CreateSerializer(Orc.Serialization.Json.JsonSerializerSettings settings) { }
+    }
+    public class JsonSerializerSettings
+    {
+        public JsonSerializerSettings() { }
+        public bool IncludeFields { get; set; }
+        public int MaxDepth { get; set; }
+        public bool PropertyNameCaseInsensitive { get; set; }
+        public bool WriteIndented { get; set; }
+    }
+    public static class OrcSerializationJsonModule
+    {
+        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcSerializationJson(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
+    }
+}
