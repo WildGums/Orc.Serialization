@@ -1,6 +1,7 @@
 ﻿namespace Orc.Serialization.Json
 {
     using Catel.Services;
+    using Catel.ThirdPartyNotices;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -14,6 +15,8 @@
             serviceCollection.TryAddSingleton<IJsonSerializerFactory, JsonSerializerFactory>();
 
             serviceCollection.AddSingleton<ILanguageSource>(new LanguageResourceSource("Orc.Serialization.Json", "Orc.Serialization.Json.Properties", "Resources"));
+
+            serviceCollection.AddSingleton<IThirdPartyNotice>((x) => new LibraryThirdPartyNotice("Orc.Serialization.Json", "https://github.com/wildgums/orc.serialization"));
 
             return serviceCollection;
         }
