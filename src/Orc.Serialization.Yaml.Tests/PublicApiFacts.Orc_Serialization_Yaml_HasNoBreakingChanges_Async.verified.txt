@@ -5,6 +5,13 @@ public static class ModuleInitializer
     [System.Runtime.CompilerServices.ModuleInitializer]
     public static void Initialize() { }
 }
+namespace Orc
+{
+    public static class OrcSerializationYamlModule
+    {
+        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcSerializationYaml(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
+    }
+}
 namespace Orc.Serialization.Yaml
 {
     public interface IYamlSerializer
@@ -20,10 +27,6 @@ namespace Orc.Serialization.Yaml
     {
         Orc.Serialization.Yaml.IYamlSerializer CreateSerializer();
         Orc.Serialization.Yaml.IYamlSerializer CreateSerializer(Orc.Serialization.Yaml.YamlSerializerSettings settings);
-    }
-    public static class OrcSerializationYamlModule
-    {
-        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcSerializationYaml(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
     }
     public class YamlSerializer : Orc.Serialization.Yaml.IYamlSerializer
     {
