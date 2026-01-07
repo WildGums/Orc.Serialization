@@ -5,6 +5,13 @@ public static class ModuleInitializer
     [System.Runtime.CompilerServices.ModuleInitializer]
     public static void Initialize() { }
 }
+namespace Orc
+{
+    public static class OrcSerializationJsonModule
+    {
+        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcSerializationJson(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
+    }
+}
 namespace Orc.Serialization.Json
 {
     public interface IJsonSerializer
@@ -40,9 +47,5 @@ namespace Orc.Serialization.Json
         public int MaxDepth { get; set; }
         public bool PropertyNameCaseInsensitive { get; set; }
         public bool WriteIndented { get; set; }
-    }
-    public static class OrcSerializationJsonModule
-    {
-        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcSerializationJson(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
     }
 }
