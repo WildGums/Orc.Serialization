@@ -1,4 +1,4 @@
-﻿namespace Orc.Serialization.Tests
+﻿namespace Orc.Serialization.Yaml.Tests
 {
     using Catel;
     using Microsoft.Extensions.DependencyInjection;
