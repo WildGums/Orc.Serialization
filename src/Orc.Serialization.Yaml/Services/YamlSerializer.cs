@@ -1,58 +1,57 @@
-﻿namespace Orc.Serialization.Yaml
+﻿namespace Orc.Serialization.Yaml;
+
+using System;
+using System.IO;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
+
+public class YamlSerializer : IYamlSerializer
 {
-    using System;
-    using System.IO;
-    using YamlDotNet.Serialization;
-    using YamlDotNet.Serialization.NamingConventions;
+    private readonly ISerializer _innerSerializer;
+    private readonly IDeserializer _innerDeserializer;
 
-    public class YamlSerializer : IYamlSerializer
+    public YamlSerializer(YamlSerializerSettings settings)
     {
-        private readonly ISerializer _innerSerializer;
-        private readonly IDeserializer _innerDeserializer;
+        var serializerBuilder = new SerializerBuilder()
+            .WithNamingConvention(CamelCaseNamingConvention.Instance);
 
-        public YamlSerializer(YamlSerializerSettings settings)
+        if (!settings.IncludeFields)
         {
-            var serializerBuilder = new SerializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance);
-
-            if (!settings.IncludeFields)
-            {
-                serializerBuilder = serializerBuilder
-                    .IgnoreFields();
-            }
-
-            _innerSerializer = serializerBuilder.Build();
-
-            var deserializerBuilder = new DeserializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance);
-
-            if (!settings.IncludeFields)
-            {
-                deserializerBuilder = deserializerBuilder
-                    .IgnoreFields();
-            }
-
-            _innerDeserializer = deserializerBuilder.Build();
+            serializerBuilder = serializerBuilder
+                .IgnoreFields();
         }
 
-        public object? Deserialize(Stream stream, Type targetType)
+        _innerSerializer = serializerBuilder.Build();
+
+        var deserializerBuilder = new DeserializerBuilder()
+            .WithNamingConvention(CamelCaseNamingConvention.Instance);
+
+        if (!settings.IncludeFields)
         {
-            // Don't dispose, we don't own the stream
+            deserializerBuilder = deserializerBuilder
+                .IgnoreFields();
+        }
+
+        _innerDeserializer = deserializerBuilder.Build();
+    }
+
+    public object? Deserialize(Stream stream, Type targetType)
+    {
+        // Don't dispose, we don't own the stream
 #pragma warning disable IDISP001 // Dispose created
-            var textReader = new StreamReader(stream);
+        var textReader = new StreamReader(stream);
 #pragma warning restore IDISP001 // Dispose created
 
-            return _innerDeserializer.Deserialize(textReader, targetType);
-        }
+        return _innerDeserializer.Deserialize(textReader, targetType);
+    }
 
-        public void Serialize(Stream stream, object obj)
-        {
-            // Don't dispose, we don't own the stream
+    public void Serialize(Stream stream, object obj)
+    {
+        // Don't dispose, we don't own the stream
 #pragma warning disable IDISP001 // Dispose created
-            var textWriter = new StreamWriter(stream);
+        var textWriter = new StreamWriter(stream);
 #pragma warning restore IDISP001 // Dispose created
 
-            _innerSerializer.Serialize(textWriter, obj);
-        }
+        _innerSerializer.Serialize(textWriter, obj);
     }
 }

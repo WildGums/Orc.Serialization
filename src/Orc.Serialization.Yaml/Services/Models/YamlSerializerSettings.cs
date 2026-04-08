@@ -1,13 +1,12 @@
-﻿namespace Orc.Serialization.Yaml
+﻿namespace Orc.Serialization.Yaml;
+
+public class YamlSerializerSettings
 {
-    public class YamlSerializerSettings
+    public YamlSerializerSettings()
     {
-        public YamlSerializerSettings()
-        {
-        }
-
-        public bool IncludeFields { get; set; } = false;
-
-        //public bool PropertyNameCaseInsensitive { get; set; } = false;
     }
+
+    public bool IncludeFields { get; set; } = false;
+
+    //public bool PropertyNameCaseInsensitive { get; set; } = false;
 }

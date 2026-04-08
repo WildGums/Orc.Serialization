@@ -1,23 +1,22 @@
-﻿namespace Orc.Serialization.Yaml
+﻿namespace Orc.Serialization.Yaml;
+
+public class YamlSerializerFactory : IYamlSerializerFactory
 {
-    public class YamlSerializerFactory : IYamlSerializerFactory
+    private readonly YamlSerializerSettings _defaultSettings;
+
+    public YamlSerializerFactory()
     {
-        private readonly YamlSerializerSettings _defaultSettings;
+        _defaultSettings = new YamlSerializerSettings();
+    }
 
-        public YamlSerializerFactory()
-        {
-            _defaultSettings = new YamlSerializerSettings();
-        }
+    public IYamlSerializer CreateSerializer()
+    {
+        return CreateSerializer(_defaultSettings);
+    }
 
-        public IYamlSerializer CreateSerializer()
-        {
-            return CreateSerializer(_defaultSettings);
-        }
-
-        public IYamlSerializer CreateSerializer(YamlSerializerSettings settings)
-        {
-            var serializer = new YamlSerializer(settings);
-            return serializer;
-        }
+    public IYamlSerializer CreateSerializer(YamlSerializerSettings settings)
+    {
+        var serializer = new YamlSerializer(settings);
+        return serializer;
     }
 }

@@ -1,9 +1,8 @@
-﻿namespace Orc.Serialization.Json
-{
-    public interface IJsonSerializerFactory
-    {
-        IJsonSerializer CreateSerializer();
+﻿namespace Orc.Serialization.Json;
 
-        IJsonSerializer CreateSerializer(JsonSerializerSettings settings);
-    }
+public interface IJsonSerializerFactory
+{
+    IJsonSerializer CreateSerializer();
+
+    IJsonSerializer CreateSerializer(JsonSerializerSettings settings);
 }

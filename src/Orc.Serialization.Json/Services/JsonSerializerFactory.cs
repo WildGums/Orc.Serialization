@@ -1,23 +1,22 @@
-﻿namespace Orc.Serialization.Json
+﻿namespace Orc.Serialization.Json;
+
+public class JsonSerializerFactory : IJsonSerializerFactory
 {
-    public class JsonSerializerFactory : IJsonSerializerFactory
+    private readonly JsonSerializerSettings _defaultSettings;
+
+    public JsonSerializerFactory()
     {
-        private readonly JsonSerializerSettings _defaultSettings;
+        _defaultSettings = new JsonSerializerSettings();
+    }
 
-        public JsonSerializerFactory()
-        {
-            _defaultSettings = new JsonSerializerSettings();
-        }
+    public IJsonSerializer CreateSerializer()
+    {
+        return CreateSerializer(_defaultSettings);
+    }
 
-        public IJsonSerializer CreateSerializer()
-        {
-            return CreateSerializer(_defaultSettings);
-        }
-
-        public IJsonSerializer CreateSerializer(JsonSerializerSettings settings)
-        {
-            var serializer = new JsonSerializer(settings);
-            return serializer;
-        }
+    public IJsonSerializer CreateSerializer(JsonSerializerSettings settings)
+    {
+        var serializer = new JsonSerializer(settings);
+        return serializer;
     }
 }

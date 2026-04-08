@@ -1,12 +1,11 @@
-﻿namespace Orc.Serialization.Yaml
+﻿namespace Orc.Serialization.Yaml;
+
+using System;
+using System.IO;
+
+public interface IYamlSerializer
 {
-    using System;
-    using System.IO;
+    object? Deserialize(Stream stream, Type targetType);
 
-    public interface IYamlSerializer
-    {
-        object? Deserialize(Stream stream, Type targetType);
-
-        void Serialize(Stream stream, object obj);
-    }
+    void Serialize(Stream stream, object obj);
 }

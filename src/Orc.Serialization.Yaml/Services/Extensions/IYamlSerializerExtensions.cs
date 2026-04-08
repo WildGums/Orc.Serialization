@@ -1,12 +1,11 @@
-﻿namespace Orc.Serialization.Yaml
-{
-    using System.IO;
+﻿namespace Orc.Serialization.Yaml;
 
-    public static class IYamlSerializerExtensions
+using System.IO;
+
+public static class IYamlSerializerExtensions
+{
+    public static T? Deserialize<T>(this IYamlSerializer yamlSerializer, Stream stream)
     {
-        public static T? Deserialize<T>(this IYamlSerializer yamlSerializer, Stream stream)
-        {
-            return (T?)yamlSerializer.Deserialize(stream, typeof(T));
-        }
+        return (T?)yamlSerializer.Deserialize(stream, typeof(T));
     }
 }

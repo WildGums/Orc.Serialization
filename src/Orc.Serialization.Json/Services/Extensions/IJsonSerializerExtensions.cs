@@ -1,12 +1,11 @@
-﻿namespace Orc.Serialization.Json
-{
-    using System.IO;
+﻿namespace Orc.Serialization.Json;
 
-    public static class IJsonSerializerExtensions
+using System.IO;
+
+public static class IJsonSerializerExtensions
+{
+    public static T? Deserialize<T>(this IJsonSerializer jsonSerializer, Stream stream)
     {
-        public static T? Deserialize<T>(this IJsonSerializer jsonSerializer, Stream stream)
-        {
-            return (T?)jsonSerializer.Deserialize(stream, typeof(T));
-        }
+        return (T?)jsonSerializer.Deserialize(stream, typeof(T));
     }
 }

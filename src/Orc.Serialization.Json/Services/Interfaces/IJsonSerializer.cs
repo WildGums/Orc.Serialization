@@ -1,12 +1,11 @@
-﻿namespace Orc.Serialization.Json
+﻿namespace Orc.Serialization.Json;
+
+using System;
+using System.IO;
+
+public interface IJsonSerializer
 {
-    using System;
-    using System.IO;
+    object? Deserialize(Stream stream, Type targetType);
 
-    public interface IJsonSerializer
-    {
-        object? Deserialize(Stream stream, Type targetType);
-
-        void Serialize(Stream stream, object obj);
-    }
+    void Serialize(Stream stream, object obj);
 }

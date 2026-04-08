@@ -1,9 +1,8 @@
-﻿namespace Orc.Serialization.Yaml
-{
-    public interface IYamlSerializerFactory
-    {
-        IYamlSerializer CreateSerializer();
+﻿namespace Orc.Serialization.Yaml;
 
-        IYamlSerializer CreateSerializer(YamlSerializerSettings settings);
-    }
+public interface IYamlSerializerFactory
+{
+    IYamlSerializer CreateSerializer();
+
+    IYamlSerializer CreateSerializer(YamlSerializerSettings settings);
 }
