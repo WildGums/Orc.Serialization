@@ -1,0 +1,30 @@
+﻿namespace Orc.Serialization.Yaml.Tests;
+
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using NUnit.Framework;
+using Orc.Serialization.Yaml;
+using PublicApiGenerator;
+using VerifyNUnit;
+
+[TestFixture]
+public class PublicApiFacts
+{
+    [Test, MethodImpl(MethodImplOptions.NoInlining)]
+    public async Task Orc_Serialization_Yaml_HasNoBreakingChanges_Async()
+    {
+        var assembly = typeof(YamlSerializerFactory).Assembly;
+
+        await PublicApiApprover.ApprovePublicApiAsync(assembly);
+    }
+
+    internal static class PublicApiApprover
+    {
+        public static async Task ApprovePublicApiAsync(Assembly assembly)
+        {
+            var publicApi = ApiGenerator.GeneratePublicApi(assembly, new ApiGeneratorOptions());
+            await Verifier.Verify(publicApi);
+        }
+    }
+}

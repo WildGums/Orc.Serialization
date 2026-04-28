@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net10.0-windows</TargetFrameworks>
+    <AssemblyName>Orc.Serialization.Json.Tests</AssemblyName>
+    <RootNamespace>Orc.Serialization.Json.Tests</RootNamespace>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <PackageId>Orc.Serialization.Json.Tests</PackageId>
+    <PackageVersion>1.0.0-alpha0001</PackageVersion>
+    <Description></Description>
+    <PackageTags></PackageTags>
+    <SonarQubeExclude>true</SonarQubeExclude>
+    <UseWpf>true</UseWpf>
+    <Nullable>annotations</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Catel.Fody" Version="7.0.0" PrivateAssets="all" />
+    <PackageReference Include="Fody" Version="6.9.3" PrivateAssets="all">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
+    <PackageReference Include="NUnit" Version="4.5.1" PrivateAssets="all" />
+    <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" PrivateAssets="all" />
+    <PackageReference Include="PublicApiGenerator" Version="11.5.4" PrivateAssets="all" />
+    <PackageReference Include="Verify.NUnit" Version="31.16.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Orc.Serialization.Json\Orc.Serialization.Json.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="*.approved.cs;*.received.cs" />
+    <Content Include="Models\*.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <Import Project="$(MSBuildProjectDirectory)\..\Directory.Build.shared.explicit.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.Build.shared.explicit.props')" />
+  <Import Project="$(MSBuildProjectDirectory)\..\Directory.Build.shared.tests.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.Build.shared.tests.props')" />
+</Project>

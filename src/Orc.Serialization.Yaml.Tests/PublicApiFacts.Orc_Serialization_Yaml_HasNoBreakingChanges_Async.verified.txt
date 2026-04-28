@@ -1,0 +1,48 @@
+﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v10.0", FrameworkDisplayName=".NET 10.0")]
+public static class ModuleInitializer
+{
+    [System.Runtime.CompilerServices.ModuleInitializer]
+    public static void Initialize() { }
+}
+namespace Orc
+{
+    public static class OrcSerializationYamlModule
+    {
+        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcSerializationYaml(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
+    }
+}
+namespace Orc.Serialization.Yaml
+{
+    public interface IYamlSerializer
+    {
+        object? Deserialize(System.IO.Stream stream, System.Type targetType);
+        void Serialize(System.IO.Stream stream, object obj);
+    }
+    public static class IYamlSerializerExtensions
+    {
+        public static T? Deserialize<T>(this Orc.Serialization.Yaml.IYamlSerializer yamlSerializer, System.IO.Stream stream) { }
+    }
+    public interface IYamlSerializerFactory
+    {
+        Orc.Serialization.Yaml.IYamlSerializer CreateSerializer();
+        Orc.Serialization.Yaml.IYamlSerializer CreateSerializer(Orc.Serialization.Yaml.YamlSerializerSettings settings);
+    }
+    public class YamlSerializer : Orc.Serialization.Yaml.IYamlSerializer
+    {
+        public YamlSerializer(Orc.Serialization.Yaml.YamlSerializerSettings settings) { }
+        public object? Deserialize(System.IO.Stream stream, System.Type targetType) { }
+        public void Serialize(System.IO.Stream stream, object obj) { }
+    }
+    public class YamlSerializerFactory : Orc.Serialization.Yaml.IYamlSerializerFactory
+    {
+        public YamlSerializerFactory() { }
+        public Orc.Serialization.Yaml.IYamlSerializer CreateSerializer() { }
+        public Orc.Serialization.Yaml.IYamlSerializer CreateSerializer(Orc.Serialization.Yaml.YamlSerializerSettings settings) { }
+    }
+    public class YamlSerializerSettings
+    {
+        public YamlSerializerSettings() { }
+        public bool IncludeFields { get; set; }
+    }
+}

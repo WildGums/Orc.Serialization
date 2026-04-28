@@ -1,0 +1,23 @@
+<Solution>
+  <Folder Name="/misc/">
+    <File Path="Directory.build.project.props" />
+    <File Path="Directory.build.props" />
+    <File Path="Directory.build.shared.explicit.props" />
+    <File Path="Directory.build.shared.implicit.props" />
+    <File Path="Directory.build.shared.mat.props" />
+    <File Path="Directory.build.targets" />
+    <File Path="GlobalSuppressions.cs" />
+    <File Path="MethodTimeLogger.cs" />
+    <File Path="nuget.config" />
+    <File Path="SolutionAssemblyInfo.cs" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Core/">
+    <Project Path="Orc.Serialization.Json/Orc.Serialization.Json.csproj" />
+    <Project Path="Orc.Serialization.Yaml/Orc.Serialization.Yaml.csproj" Id="6607793b-c15e-4fe3-bc84-8e202c4e5183" />
+  </Folder>
+  <Folder Name="/src/Tests/">
+    <Project Path="Orc.Serialization.Json.Tests/Orc.Serialization.Json.Tests.csproj" />
+    <Project Path="Orc.Serialization.Yaml.Tests/Orc.Serialization.Yaml.Tests.csproj" />
+  </Folder>
+</Solution>
