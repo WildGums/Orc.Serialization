@@ -4,9 +4,12 @@ using System;
 using System.IO;
 using Catel.Logging;
 using Catel.Reflection;
+using Microsoft.Extensions.Logging;
 
 public sealed class TemporaryFilesContext : IDisposable
 {
+    private static readonly ILogger Log = LogManager.GetLogger(typeof(TemporaryFilesContext));
+
     private readonly Guid _randomGuid = Guid.NewGuid();
     private readonly string _rootDirectory;
     private readonly bool _cleanUp;
@@ -35,7 +38,7 @@ public sealed class TemporaryFilesContext : IDisposable
             return;
         }
 
-        //Log.Info("Deleting temporary files from '{0}'", _rootDirectory);
+        Log.LogInformation("Deleting temporary files from '{RootDirectory}'", _rootDirectory);
 
         try
         {
@@ -44,9 +47,9 @@ public sealed class TemporaryFilesContext : IDisposable
                 Directory.Delete(_rootDirectory, true);
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            //Log.Error(ex, "Failed to delete temporary files");
+            Log.LogError(ex, "Failed to delete temporary files");
         }
     }
 
