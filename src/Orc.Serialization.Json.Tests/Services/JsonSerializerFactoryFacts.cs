@@ -1,8 +1,11 @@
 namespace Orc.Serialization.Json.Tests;
 
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using NUnit.Framework;
+using VerifyNUnit;
 
 public partial class JsonSerializerFactoryFacts
 {
@@ -36,8 +39,8 @@ public partial class JsonSerializerFactoryFacts
             Assert.That(serializer, Is.InstanceOf<IJsonSerializer>());
         }
 
-        [Test]
-        public void Created_Serializer_Produces_Valid_Json()
+        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        public async Task Created_Serializer_Produces_Valid_Json()
         {
             var factory = new JsonSerializerFactory();
             var serializer = factory.CreateSerializer();
@@ -48,9 +51,7 @@ public partial class JsonSerializerFactoryFacts
 
             var json = Encoding.UTF8.GetString(stream.ToArray());
 
-            Assert.That(json, Does.Contain("\"Id\""));
-            Assert.That(json, Does.Contain("\"Name\""));
-            Assert.That(json, Does.Contain("\"Factory\""));
+            await Verifier.Verify(json);
         }
     }
 }
