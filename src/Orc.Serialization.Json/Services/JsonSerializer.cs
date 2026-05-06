@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 public class JsonSerializer : IJsonSerializer
 {
@@ -17,6 +18,11 @@ public class JsonSerializer : IJsonSerializer
             WriteIndented = settings.WriteIndented,
             PropertyNameCaseInsensitive = settings.PropertyNameCaseInsensitive,
         };
+
+        if (settings.SerializeEnumsAsStrings)
+        {
+            _options.Converters.Add(new JsonStringEnumConverter());
+        }
     }
 
     public object? Deserialize(Stream stream, Type targetType)

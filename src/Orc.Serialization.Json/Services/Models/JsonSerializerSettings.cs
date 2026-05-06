@@ -13,4 +13,6 @@ public class JsonSerializerSettings
     public bool PropertyNameCaseInsensitive { get; set; } = false;
 
     public bool WriteIndented { get; set; } = true;
+
+    public bool SerializeEnumsAsStrings { get; set; } = true;
 }
