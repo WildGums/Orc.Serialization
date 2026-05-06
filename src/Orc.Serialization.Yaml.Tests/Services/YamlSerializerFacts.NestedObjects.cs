@@ -2,8 +2,11 @@ namespace Orc.Serialization.Yaml.Tests;
 
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using NUnit.Framework;
+using VerifyNUnit;
 
 public partial class YamlSerializerFacts
 {
@@ -30,8 +33,8 @@ public partial class YamlSerializerFacts
     [TestFixture]
     public class The_Serialize_Method_NestedObjects
     {
-        [Test]
-        public void Serializes_Three_Level_Nested_Object_To_Yaml()
+        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        public async Task Serializes_Three_Level_Nested_Object_To_Yaml()
         {
             var serializer = CreateSerializer();
             var order = new OrderModel
@@ -65,14 +68,10 @@ public partial class YamlSerializerFacts
             using var stream = new MemoryStream();
             serializer.Serialize(stream, order);
 
+            stream.Position = 0;
             var yaml = Encoding.UTF8.GetString(stream.ToArray());
 
-            Assert.That(yaml, Does.Contain("ORD-001"));
-            Assert.That(yaml, Does.Contain("Widget"));
-            Assert.That(yaml, Does.Contain("fragile"));
-            Assert.That(yaml, Does.Contain("express"));
-            Assert.That(yaml, Does.Contain("Gadget"));
-            Assert.That(yaml, Does.Contain("oversized"));
+            await Verifier.Verify(yaml);
         }
     }
 

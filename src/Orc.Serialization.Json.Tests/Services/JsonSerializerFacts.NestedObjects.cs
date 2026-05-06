@@ -2,8 +2,11 @@ namespace Orc.Serialization.Json.Tests;
 
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using NUnit.Framework;
+using VerifyNUnit;
 
 public partial class JsonSerializerFacts
 {
@@ -30,8 +33,8 @@ public partial class JsonSerializerFacts
     [TestFixture]
     public class The_Serialize_Method_NestedObjects
     {
-        [Test]
-        public void Serializes_Three_Level_Nested_Object_To_Json()
+        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        public async Task Serializes_Three_Level_Nested_Object_To_Json()
         {
             var serializer = CreateSerializer();
             var order = new OrderModel
@@ -65,14 +68,10 @@ public partial class JsonSerializerFacts
             using var stream = new MemoryStream();
             serializer.Serialize(stream, order);
 
+            stream.Position = 0;
             var json = Encoding.UTF8.GetString(stream.ToArray());
 
-            Assert.That(json, Does.Contain("ORD-001"));
-            Assert.That(json, Does.Contain("Widget"));
-            Assert.That(json, Does.Contain("fragile"));
-            Assert.That(json, Does.Contain("express"));
-            Assert.That(json, Does.Contain("Gadget"));
-            Assert.That(json, Does.Contain("oversized"));
+            await Verifier.Verify(json);
         }
     }
 
