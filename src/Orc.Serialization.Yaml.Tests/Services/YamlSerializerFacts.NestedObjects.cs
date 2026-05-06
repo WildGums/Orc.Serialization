@@ -17,14 +17,14 @@ public partial class YamlSerializerFacts
     {
         public string? ProductName { get; set; }
         public int Quantity { get; set; }
-        public List<TagModel>? Tags { get; set; }
+        public List<TagModel>? Tags { get; init; }
     }
 
     private class OrderModel
     {
         public string? OrderNumber { get; set; }
         public Status OrderStatus { get; set; }
-        public List<OrderItemModel>? Items { get; set; }
+        public List<OrderItemModel>? Items { get; init; }
     }
 
     [TestFixture]
