@@ -52,7 +52,7 @@ public partial class JsonSerializerFacts
         }
 
         [Test, MethodImpl(MethodImplOptions.NoInlining)]
-        public async Task Serializes_Enum_As_Number_By_Default()
+        public async Task Serializes_Enum_As_String_By_Default()
         {
             var serializer = CreateSerializer();
             var model = new SampleModel { Name = "Test", Value = 1, Status = Status.Inactive };

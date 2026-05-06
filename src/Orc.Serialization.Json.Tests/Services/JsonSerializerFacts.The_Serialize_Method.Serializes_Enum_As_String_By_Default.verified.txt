@@ -1,5 +1,5 @@
 {
   "Name": "Test",
   "Value": 1,
-  "Status": 1
+  "Status": "Inactive"
 }

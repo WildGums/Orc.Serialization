@@ -14,5 +14,5 @@ public class JsonSerializerSettings
 
     public bool WriteIndented { get; set; } = true;
 
-    public bool SerializeEnumsAsStrings { get; set; } = false;
+    public bool SerializeEnumsAsStrings { get; set; } = true;
 }
