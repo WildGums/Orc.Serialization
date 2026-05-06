@@ -53,5 +53,7 @@ public class YamlSerializer : IYamlSerializer
 #pragma warning restore IDISP001 // Dispose created
 
         _innerSerializer.Serialize(textWriter, obj);
+
+        textWriter.Flush();
     }
 }
