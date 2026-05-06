@@ -53,6 +53,7 @@ namespace Orc.Serialization.Json
         public bool IncludeFields { get; set; }
         public int MaxDepth { get; set; }
         public bool PropertyNameCaseInsensitive { get; set; }
+        public bool SerializeEnumsAsStrings { get; set; }
         public bool WriteIndented { get; set; }
     }
     public class TypeJsonConverter : System.Text.Json.Serialization.JsonConverter<System.Type?>
