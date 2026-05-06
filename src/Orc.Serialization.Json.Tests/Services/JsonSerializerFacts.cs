@@ -1,8 +1,11 @@
 namespace Orc.Serialization.Json.Tests;
 
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using NUnit.Framework;
+using VerifyNUnit;
 
 public partial class JsonSerializerFacts
 {
@@ -33,8 +36,8 @@ public partial class JsonSerializerFacts
     [TestFixture]
     public class The_Serialize_Method
     {
-        [Test]
-        public void Serializes_Simple_Object_To_Json()
+        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        public async Task Serializes_Simple_Object_To_Json()
         {
             var serializer = CreateSerializer();
             var model = new SampleModel { Name = "Test", Value = 42, Status = Status.Active };
@@ -45,14 +48,11 @@ public partial class JsonSerializerFacts
             stream.Position = 0;
             var json = Encoding.UTF8.GetString(stream.ToArray());
 
-            Assert.That(json, Does.Contain("\"Name\""));
-            Assert.That(json, Does.Contain("\"Test\""));
-            Assert.That(json, Does.Contain("\"Value\""));
-            Assert.That(json, Does.Contain("42"));
+            await Verifier.Verify(json);
         }
 
-        [Test]
-        public void Serializes_Enum_As_Number_By_Default()
+        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        public async Task Serializes_Enum_As_Number_By_Default()
         {
             var serializer = CreateSerializer();
             var model = new SampleModel { Name = "Test", Value = 1, Status = Status.Inactive };
@@ -62,13 +62,11 @@ public partial class JsonSerializerFacts
 
             var json = Encoding.UTF8.GetString(stream.ToArray());
 
-            Assert.That(json, Does.Contain("\"Status\""));
-            Assert.That(json, Does.Contain("1"));
-            Assert.That(json, Does.Not.Contain("\"Inactive\""));
+            await Verifier.Verify(json);
         }
 
-        [Test]
-        public void Serializes_Enum_As_String_When_SerializeEnumsAsStrings_Is_True()
+        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        public async Task Serializes_Enum_As_String_When_SerializeEnumsAsStrings_Is_True()
         {
             var settings = new JsonSerializerSettings { SerializeEnumsAsStrings = true };
             var serializer = CreateSerializer(settings);
@@ -79,8 +77,7 @@ public partial class JsonSerializerFacts
 
             var json = Encoding.UTF8.GetString(stream.ToArray());
 
-            Assert.That(json, Does.Contain("\"Status\""));
-            Assert.That(json, Does.Contain("\"Pending\""));
+            await Verifier.Verify(json);
         }
     }
 
