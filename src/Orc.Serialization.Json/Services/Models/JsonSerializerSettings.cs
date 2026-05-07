@@ -32,5 +32,5 @@ public class JsonSerializerSettings
     /// <summary>
     /// Gets or sets a value indicating whether runtime type info metadata should be written and read during (de)serialization.
     /// </summary>
-    public bool UseTypeInfoConverter { get; set; } = false;
+    public bool UseTypeInfoConverter { get; set; }
 }
