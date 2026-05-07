@@ -28,6 +28,6 @@ public static class IYamlSerializerExtensions
     {
         using var stream = new MemoryStream();
         yamlSerializer.Serialize(stream, instance!);
-        return Encoding.UTF8.GetString(stream.ToArray());
+        return Encoding.UTF8.GetString(stream.GetBuffer(), 0, (int)stream.Length);
     }
 }
