@@ -260,7 +260,7 @@ public partial class JsonSerializerFacts
 
             using var stream = ToStream(json);
 
-            Assert.Throws<System.Text.Json.JsonException>(() => serializer.Deserialize<AbstractAnimal>(stream));
+            Assert.Throws<NotSupportedException>(() => serializer.Deserialize<AbstractAnimal>(stream));
         }
     }
 
