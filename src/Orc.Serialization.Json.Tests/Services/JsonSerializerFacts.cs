@@ -1,7 +1,6 @@
 namespace Orc.Serialization.Json.Tests;
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -32,6 +31,11 @@ public partial class JsonSerializerFacts
     }
 
     private sealed class Dog : AbstractAnimal
+    {
+        public string? Name { get; set; }
+    }
+
+    private sealed class Cat : AbstractAnimal
     {
         public string? Name { get; set; }
     }
@@ -91,6 +95,21 @@ public partial class JsonSerializerFacts
             var json = Encoding.UTF8.GetString(stream.ToArray());
 
             await Verifier.Verify(json);
+        }
+
+        [Test]
+        public void Serializes_Abstract_Type_With_Default_Type_Info_Converter()
+        {
+            var serializer = CreateSerializer();
+            AbstractAnimal model = new Dog { Name = "Buddy" };
+
+            using var stream = new MemoryStream();
+            serializer.Serialize(stream, model);
+
+            var json = Encoding.UTF8.GetString(stream.ToArray());
+
+            Assert.That(json, Does.Contain("\"__type\""));
+            Assert.That(json, Does.Contain("\"__object\""));
         }
     }
 
@@ -171,6 +190,19 @@ public partial class JsonSerializerFacts
             Assert.That(result, Is.InstanceOf<Dog>());
             Assert.That(((Dog)result!).Name, Is.EqualTo("Buddy"));
         }
+
+        [Test]
+        public void Deserializes_Abstract_Type_With_Default_Type_Info_Converter()
+        {
+            var serializer = CreateSerializer();
+            var json = "{\"__type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Dog\",\"__object\":{\"Name\":\"Buddy\"}}";
+
+            using var stream = ToStream(json);
+            var result = serializer.Deserialize<AbstractAnimal>(stream);
+
+            Assert.That(result, Is.InstanceOf<Dog>());
+            Assert.That(((Dog)result!).Name, Is.EqualTo("Buddy"));
+        }
     }
 
     [TestFixture]
@@ -219,6 +251,38 @@ public partial class JsonSerializerFacts
             using var stream = ToStream(json);
 
             Assert.Throws<NotSupportedException>(() => serializer.Deserialize(stream, typeof(Dog)));
+        }
+
+        [Test]
+        public void Throws_When_Deserializing_Disallowed_Runtime_Type_With_Type_Info()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                SerializerBinder = new AllowedTypesSerializerBinder([typeof(AbstractAnimal)])
+            };
+            var serializer = CreateSerializer(settings);
+            var json = "{\"__type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Dog\",\"__object\":{\"Name\":\"Buddy\"}}";
+
+            using var stream = ToStream(json);
+
+            Assert.Throws<NotSupportedException>(() => serializer.Deserialize(stream, typeof(AbstractAnimal)));
+        }
+
+        [Test]
+        public void Allows_When_Deserializing_Allowed_Runtime_Type_With_Type_Info()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                SerializerBinder = new AllowedTypesSerializerBinder([typeof(AbstractAnimal), typeof(Cat)])
+            };
+            var serializer = CreateSerializer(settings);
+            var json = "{\"__type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Cat\",\"__object\":{\"Name\":\"Misty\"}}";
+
+            using var stream = ToStream(json);
+            var result = serializer.Deserialize<AbstractAnimal>(stream);
+
+            Assert.That(result, Is.InstanceOf<Cat>());
+            Assert.That(((Cat)result!).Name, Is.EqualTo("Misty"));
         }
     }
 
