@@ -1,4 +1,4 @@
-namespace Orc.Serialization.Json.Tests;
+﻿namespace Orc.Serialization.Json.Tests;
 
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -21,8 +21,8 @@ public partial class JsonSerializerFacts
 
             Assert.That(json, Is.Not.Null);
             Assert.That(json, Is.Not.Empty);
-            Assert.That(json, Does.Contain("\"Name\":\"Test\""));
-            Assert.That(json, Does.Contain("\"Value\":42"));
+            Assert.That(json, Does.Contain("\"Name\": \"Test\""));
+            Assert.That(json, Does.Contain("\"Value\": 42"));
         }
 
         [Test, MethodImpl(MethodImplOptions.NoInlining)]
