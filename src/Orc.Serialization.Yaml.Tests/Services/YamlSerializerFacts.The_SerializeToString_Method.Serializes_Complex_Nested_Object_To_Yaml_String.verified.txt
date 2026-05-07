@@ -1,0 +1,15 @@
+orderNumber: ORD-100
+orderStatus: Active
+items:
+- productName: Widget
+  quantity: 3
+  tags:
+  - label: fragile
+    priority: 1
+  - label: express
+    priority: 2
+- productName: Gadget
+  quantity: 1
+  tags:
+  - label: oversized
+    priority: 3

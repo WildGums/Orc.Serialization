@@ -18,6 +18,19 @@ public static class IJsonSerializerExtensions
     }
 
     /// <summary>
+    /// Deserializes an object of type <typeparamref name="T"/> from a JSON string.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to deserialize.</typeparam>
+    /// <param name="jsonSerializer">The JSON serializer.</param>
+    /// <param name="value">The JSON string to deserialize.</param>
+    /// <returns>The deserialized object, or <c>null</c> if deserialization returns no result.</returns>
+    public static T? DeserializeFromString<T>(this IJsonSerializer jsonSerializer, string value)
+    {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(value));
+        return jsonSerializer.Deserialize<T>(stream);
+    }
+
+    /// <summary>
     /// Serializes the specified instance to a JSON string.
     /// </summary>
     /// <typeparam name="T">The type of the object to serialize.</typeparam>

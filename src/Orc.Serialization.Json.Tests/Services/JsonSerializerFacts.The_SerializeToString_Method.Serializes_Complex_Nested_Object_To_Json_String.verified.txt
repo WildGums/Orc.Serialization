@@ -1,0 +1,30 @@
+{
+  "OrderNumber": "ORD-100",
+  "OrderStatus": "Active",
+  "Items": [
+    {
+      "ProductName": "Widget",
+      "Quantity": 3,
+      "Tags": [
+        {
+          "Label": "fragile",
+          "Priority": 1
+        },
+        {
+          "Label": "express",
+          "Priority": 2
+        }
+      ]
+    },
+    {
+      "ProductName": "Gadget",
+      "Quantity": 1,
+      "Tags": [
+        {
+          "Label": "oversized",
+          "Priority": 3
+        }
+      ]
+    }
+  ]
+}

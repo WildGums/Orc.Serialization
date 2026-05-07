@@ -29,6 +29,7 @@ namespace Orc.Serialization.Json
     public static class IJsonSerializerExtensions
     {
         public static T? Deserialize<T>(this Orc.Serialization.Json.IJsonSerializer jsonSerializer, System.IO.Stream stream) { }
+        public static T? DeserializeFromString<T>(this Orc.Serialization.Json.IJsonSerializer jsonSerializer, string value) { }
         public static string SerializeToString<T>(this Orc.Serialization.Json.IJsonSerializer jsonSerializer, T instance) { }
     }
     public interface IJsonSerializerFactory

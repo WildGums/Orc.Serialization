@@ -18,6 +18,19 @@ public static class IYamlSerializerExtensions
     }
 
     /// <summary>
+    /// Deserializes an object of type <typeparamref name="T"/> from a YAML string.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to deserialize.</typeparam>
+    /// <param name="yamlSerializer">The YAML serializer.</param>
+    /// <param name="value">The YAML string to deserialize.</param>
+    /// <returns>The deserialized object, or <c>null</c> if deserialization returns no result.</returns>
+    public static T? DeserializeFromString<T>(this IYamlSerializer yamlSerializer, string value)
+    {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(value));
+        return yamlSerializer.Deserialize<T>(stream);
+    }
+
+    /// <summary>
     /// Serializes the specified instance to a YAML string.
     /// </summary>
     /// <typeparam name="T">The type of the object to serialize.</typeparam>
