@@ -38,6 +38,7 @@ public partial class JsonSerializerFacts
     private sealed class Cat : AbstractAnimal
     {
         public string? Name { get; set; }
+        public int Lives { get; set; }
     }
 
     private static IJsonSerializer CreateSerializer(JsonSerializerSettings? settings = null)
@@ -276,13 +277,14 @@ public partial class JsonSerializerFacts
                 SerializerBinder = new AllowedTypesSerializerBinder([typeof(AbstractAnimal), typeof(Cat)])
             };
             var serializer = CreateSerializer(settings);
-            var json = "{\"__type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Cat\",\"__object\":{\"Name\":\"Misty\"}}";
+            var json = "{\"__type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Cat\",\"__object\":{\"Name\":\"Misty\",\"Lives\":9}}";
 
             using var stream = ToStream(json);
             var result = serializer.Deserialize<AbstractAnimal>(stream);
 
             Assert.That(result, Is.InstanceOf<Cat>());
             Assert.That(((Cat)result!).Name, Is.EqualTo("Misty"));
+            Assert.That(((Cat)result).Lives, Is.EqualTo(9));
         }
     }
 

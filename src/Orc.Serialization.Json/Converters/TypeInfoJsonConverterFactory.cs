@@ -1,6 +1,7 @@
 ﻿namespace Orc.Serialization.Json;
 
 using System;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Catel.Reflection;
@@ -40,7 +41,7 @@ internal sealed class TypeInfoJsonConverterFactory : JsonConverterFactory
                 var runtimeType = TypeCache.GetType(typeName!, false);
                 if (runtimeType is null || !typeof(T).IsAssignableFrom(runtimeType))
                 {
-                    throw new JsonException();
+                    throw new JsonException($"The type '{typeName}' cannot be resolved or is not assignable to '{typeof(T).FullName}'.");
                 }
 
                 var value = System.Text.Json.JsonSerializer.Deserialize(objectElement.GetRawText(), runtimeType, CreateOptionsWithoutTypeInfoConverter(options));
@@ -102,13 +103,10 @@ internal sealed class TypeInfoJsonConverterFactory : JsonConverterFactory
         private static JsonSerializerOptions CreateOptionsWithoutTypeInfoConverter(JsonSerializerOptions options)
         {
             var clonedOptions = new JsonSerializerOptions(options);
-
-            for (var i = clonedOptions.Converters.Count - 1; i >= 0; i--)
+            var converter = clonedOptions.Converters.OfType<TypeInfoJsonConverterFactory>().FirstOrDefault();
+            if (converter is not null)
             {
-                if (clonedOptions.Converters[i] is TypeInfoJsonConverterFactory)
-                {
-                    clonedOptions.Converters.RemoveAt(i);
-                }
+                clonedOptions.Converters.Remove(converter);
             }
 
             return clonedOptions;

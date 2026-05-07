@@ -1,6 +1,7 @@
 ﻿namespace Orc.Serialization.Json;
 
 using System;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -68,13 +69,10 @@ internal sealed class SerializerBinderJsonConverterFactory : JsonConverterFactor
         private static JsonSerializerOptions CreateOptionsWithoutBinderConverter(JsonSerializerOptions options)
         {
             var clonedOptions = new JsonSerializerOptions(options);
-
-            for (var i = clonedOptions.Converters.Count - 1; i >= 0; i--)
+            var converter = clonedOptions.Converters.OfType<SerializerBinderJsonConverterFactory>().FirstOrDefault();
+            if (converter is not null)
             {
-                if (clonedOptions.Converters[i] is SerializerBinderJsonConverterFactory)
-                {
-                    clonedOptions.Converters.RemoveAt(i);
-                }
+                clonedOptions.Converters.Remove(converter);
             }
 
             return clonedOptions;
