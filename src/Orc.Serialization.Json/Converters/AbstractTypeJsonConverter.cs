@@ -47,27 +47,15 @@ public abstract class AbstractTypeJsonConverter<T> : JsonConverter<T>
             throw new JsonException();
         }
 
-        reader.Read();
-        if (reader.TokenType != JsonTokenType.PropertyName)
-        {
-            throw new JsonException();
-        }
-
-        propertyName = reader.GetString();
-        if (propertyName != "__object")
-        {
-            throw new JsonException();
-        }
-
-        reader.Read();
-        if (reader.TokenType != JsonTokenType.StartObject)
-        {
-            throw new JsonException();
-        }
-
+        // Now we can deserialize the (same) object now we know the type
         var typeInfo = options.GetTypeInfo(itemType);
 
-        var item = System.Text.Json.JsonSerializer.Deserialize(ref reader, typeInfo);
+        // Need to skip because of __type
+        typeInfo.Options.UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip;
+
+        var element = JsonElement.ParseValue(ref reader);
+        var item = element.Deserialize(typeInfo);
+
         if (item is not T typedValue)
         {
             throw new JsonException();
@@ -90,11 +78,22 @@ public abstract class AbstractTypeJsonConverter<T> : JsonConverter<T>
 
         writer.WriteString("__type", value.GetType().GetSafeFullName());
 
-        writer.WritePropertyName("__object");
-
         var typeInfo = options.GetTypeInfo(value.GetType());
 
-        System.Text.Json.JsonSerializer.Serialize(writer, value, typeInfo);
+        var temp = System.Text.Json.JsonSerializer.SerializeToNode(value, typeInfo)!.AsObject();
+
+        foreach (var kvp in temp)
+        {
+            writer.WritePropertyName(kvp.Key);
+            if (kvp.Value is null)
+            {
+                writer.WriteNullValue();
+            }
+            else
+            {
+                kvp.Value.WriteTo(writer);
+            }
+        }
 
         writer.WriteEndObject();
     }

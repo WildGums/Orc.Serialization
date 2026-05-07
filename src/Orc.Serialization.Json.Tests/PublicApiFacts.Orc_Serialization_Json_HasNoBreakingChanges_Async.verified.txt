@@ -14,17 +14,17 @@ namespace Orc
 }
 namespace Orc.Serialization.Json
 {
-    public class AllowedTypesSerializerBinder : Orc.Serialization.Json.ISerializerBinder
-    {
-        public AllowedTypesSerializerBinder(System.Collections.Generic.IEnumerable<System.Type> allowedTypes) { }
-        public System.Func<System.Type, bool> IsTypeAllowed { get; }
-    }
     public abstract class AbstractTypeJsonConverter<T> : System.Text.Json.Serialization.JsonConverter<T>
     {
         protected AbstractTypeJsonConverter() { }
         public override bool CanConvert(System.Type typeToConvert) { }
         public override T Read(ref System.Text.Json.Utf8JsonReader reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options) { }
         public override void Write(System.Text.Json.Utf8JsonWriter writer, T value, System.Text.Json.JsonSerializerOptions options) { }
+    }
+    public class AllowedTypesSerializerBinder : Orc.Serialization.Json.ISerializerBinder
+    {
+        public AllowedTypesSerializerBinder(System.Collections.Generic.IEnumerable<System.Type> allowedTypes) { }
+        public System.Func<System.Type, bool> IsTypeAllowed { get; }
     }
     public interface IJsonSerializer
     {

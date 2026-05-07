@@ -1,6 +1,4 @@
 {
-  "__type": "Orc.Serialization.Json.Tests.JsonSerializerFacts+Dog",
-  "__object": {
-    "Name": "Buddy"
-  }
+  "__type": "Orc.Serialization.Json.Tests.JsonSerializerFacts\u002BDog",
+  "Name": "Buddy"
 }

@@ -1,4 +1,4 @@
-namespace Orc.Serialization.Json;
+﻿namespace Orc.Serialization.Json;
 
 using System;
 using System.Text.Json;
@@ -69,8 +69,22 @@ internal sealed class TypeInfoJsonConverterFactory : JsonConverterFactory
 
             writer.WriteStartObject();
             writer.WriteString("__type", runtimeType.GetSafeFullName());
-            writer.WritePropertyName("__object");
-            System.Text.Json.JsonSerializer.Serialize(writer, value, runtimeType, CreateOptionsWithoutTypeInfoConverter(options));
+
+            var temp = System.Text.Json.JsonSerializer.SerializeToNode(value, runtimeType, CreateOptionsWithoutTypeInfoConverter(options))!.AsObject();
+
+            foreach (var kvp in temp)
+            {
+                writer.WritePropertyName(kvp.Key);
+                if (kvp.Value is null)
+                {
+                    writer.WriteNullValue();
+                }
+                else
+                {
+                    kvp.Value.WriteTo(writer);
+                }
+            }
+
             writer.WriteEndObject();
         }
 
@@ -89,11 +103,12 @@ internal sealed class TypeInfoJsonConverterFactory : JsonConverterFactory
                 return false;
             }
 
-            if (!rootElement.TryGetProperty("__type", out var typeElement) ||
-                !rootElement.TryGetProperty("__object", out objectElement))
+            if (!rootElement.TryGetProperty("__type", out var typeElement))
             {
                 return false;
             }
+
+            objectElement = rootElement;
 
             typeName = typeElement.GetString();
             return !string.IsNullOrWhiteSpace(typeName);
@@ -101,7 +116,11 @@ internal sealed class TypeInfoJsonConverterFactory : JsonConverterFactory
 
         private static JsonSerializerOptions CreateOptionsWithoutTypeInfoConverter(JsonSerializerOptions options)
         {
-            var clonedOptions = new JsonSerializerOptions(options);
+            var clonedOptions = new JsonSerializerOptions(options)
+            {
+                // Need to skip because of __type
+                UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip
+            };
 
             for (var i = clonedOptions.Converters.Count - 1; i >= 0; i--)
             {
