@@ -1,9 +1,9 @@
-﻿namespace Orc.Serialization.Json;
+namespace Orc.Serialization.Json;
 
 using System;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Catel.Reflection;
 
 internal sealed class SerializerBinderJsonConverterFactory : JsonConverterFactory
 {
@@ -20,6 +20,7 @@ internal sealed class SerializerBinderJsonConverterFactory : JsonConverterFactor
     {
         ArgumentNullException.ThrowIfNull(typeToConvert);
 
+        // Intentionally broad so binder validation applies to all payloads.
         return typeToConvert != typeof(Type);
     }
 
@@ -43,9 +44,13 @@ internal sealed class SerializerBinderJsonConverterFactory : JsonConverterFactor
 
         public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            EnsureTypeIsAllowed(typeof(T), "deserialize");
+            using var document = JsonDocument.ParseValue(ref reader);
+            var rootElement = document.RootElement;
+            var typeToValidate = ResolveTypeToValidate(rootElement);
 
-            return System.Text.Json.JsonSerializer.Deserialize<T>(ref reader, CreateOptionsWithoutBinderConverter(options));
+            EnsureTypeIsAllowed(typeToValidate, "deserialize");
+
+            return System.Text.Json.JsonSerializer.Deserialize<T>(rootElement.GetRawText(), CreateOptionsWithoutBinderConverter(options));
         }
 
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
@@ -66,13 +71,44 @@ internal sealed class SerializerBinderJsonConverterFactory : JsonConverterFactor
             }
         }
 
+        private static Type ResolveTypeToValidate(JsonElement rootElement)
+        {
+            if (rootElement.ValueKind == JsonValueKind.Object &&
+                rootElement.TryGetProperty("__type", out var typeElement))
+            {
+                var runtimeTypeName = typeElement.GetString();
+                if (!string.IsNullOrWhiteSpace(runtimeTypeName))
+                {
+                    var runtimeType = TypeCache.GetType(runtimeTypeName, false);
+                    if (runtimeType is not null)
+                    {
+                        return runtimeType;
+                    }
+
+                    throw new JsonException($"The type '{runtimeTypeName}' cannot be resolved.");
+                }
+            }
+
+            return typeof(T);
+        }
+
         private static JsonSerializerOptions CreateOptionsWithoutBinderConverter(JsonSerializerOptions options)
         {
             var clonedOptions = new JsonSerializerOptions(options);
-            var converter = clonedOptions.Converters.OfType<SerializerBinderJsonConverterFactory>().FirstOrDefault();
-            if (converter is not null)
+
+            if (clonedOptions.Converters.Count > 0 && clonedOptions.Converters[0] is SerializerBinderJsonConverterFactory converterAtFirstPosition)
             {
-                clonedOptions.Converters.Remove(converter);
+                clonedOptions.Converters.Remove(converterAtFirstPosition);
+                return clonedOptions;
+            }
+
+            for (var i = 0; i < clonedOptions.Converters.Count; i++)
+            {
+                if (clonedOptions.Converters[i] is SerializerBinderJsonConverterFactory converter)
+                {
+                    clonedOptions.Converters.Remove(converter);
+                    break;
+                }
             }
 
             return clonedOptions;

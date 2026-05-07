@@ -1,7 +1,6 @@
-﻿namespace Orc.Serialization.Json;
+namespace Orc.Serialization.Json;
 
 using System;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Catel.Reflection;
@@ -103,10 +102,14 @@ internal sealed class TypeInfoJsonConverterFactory : JsonConverterFactory
         private static JsonSerializerOptions CreateOptionsWithoutTypeInfoConverter(JsonSerializerOptions options)
         {
             var clonedOptions = new JsonSerializerOptions(options);
-            var converter = clonedOptions.Converters.OfType<TypeInfoJsonConverterFactory>().FirstOrDefault();
-            if (converter is not null)
+
+            for (var i = clonedOptions.Converters.Count - 1; i >= 0; i--)
             {
-                clonedOptions.Converters.Remove(converter);
+                if (clonedOptions.Converters[i] is TypeInfoJsonConverterFactory converter)
+                {
+                    clonedOptions.Converters.Remove(converter);
+                    break;
+                }
             }
 
             return clonedOptions;
