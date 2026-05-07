@@ -22,6 +22,7 @@ namespace Orc.Serialization.Yaml
     public static class IYamlSerializerExtensions
     {
         public static T? Deserialize<T>(this Orc.Serialization.Yaml.IYamlSerializer yamlSerializer, System.IO.Stream stream) { }
+        public static string SerializeToString<T>(this Orc.Serialization.Yaml.IYamlSerializer yamlSerializer, T instance) { }
     }
     public interface IYamlSerializerFactory
     {
