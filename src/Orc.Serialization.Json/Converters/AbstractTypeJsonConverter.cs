@@ -24,7 +24,7 @@ public abstract class AbstractTypeJsonConverter<T> : JsonConverter<T>
         }
 
         var propertyName = reader.GetString();
-        if (propertyName != "__type")
+        if (propertyName != "$type")
         {
             throw new JsonException();
         }
@@ -50,7 +50,7 @@ public abstract class AbstractTypeJsonConverter<T> : JsonConverter<T>
         // Now we can deserialize the (same) object now we know the type
         var typeInfo = options.GetTypeInfo(itemType);
 
-        // Need to skip because of __type
+        // Need to skip because of $type
         typeInfo.Options.UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip;
 
         var element = JsonElement.ParseValue(ref reader);
@@ -76,7 +76,7 @@ public abstract class AbstractTypeJsonConverter<T> : JsonConverter<T>
 
         writer.WriteStartObject();
 
-        writer.WriteString("__type", value.GetType().GetSafeFullName());
+        writer.WriteString("$type", value.GetType().GetSafeFullName());
 
         var typeInfo = options.GetTypeInfo(value.GetType());
 

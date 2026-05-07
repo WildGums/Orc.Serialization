@@ -68,7 +68,7 @@ internal sealed class TypeInfoJsonConverterFactory : JsonConverterFactory
             }
 
             writer.WriteStartObject();
-            writer.WriteString("__type", runtimeType.GetSafeFullName());
+            writer.WriteString("$type", runtimeType.GetSafeFullName());
 
             var temp = System.Text.Json.JsonSerializer.SerializeToNode(value, runtimeType, CreateOptionsWithoutTypeInfoConverter(options))!.AsObject();
 
@@ -103,7 +103,7 @@ internal sealed class TypeInfoJsonConverterFactory : JsonConverterFactory
                 return false;
             }
 
-            if (!rootElement.TryGetProperty("__type", out var typeElement))
+            if (!rootElement.TryGetProperty("$type", out var typeElement))
             {
                 return false;
             }
@@ -118,7 +118,7 @@ internal sealed class TypeInfoJsonConverterFactory : JsonConverterFactory
         {
             var clonedOptions = new JsonSerializerOptions(options)
             {
-                // Need to skip because of __type
+                // Need to skip because of $type
                 UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip
             };
 

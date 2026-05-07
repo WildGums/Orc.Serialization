@@ -1,4 +1,4 @@
-namespace Orc.Serialization.Json;
+﻿namespace Orc.Serialization.Json;
 
 using System;
 using System.Text.Json;
@@ -74,7 +74,7 @@ internal sealed class SerializerBinderJsonConverterFactory : JsonConverterFactor
         private static Type ResolveTypeToValidate(JsonElement rootElement)
         {
             if (rootElement.ValueKind == JsonValueKind.Object &&
-                rootElement.TryGetProperty("__type", out var typeElement))
+                rootElement.TryGetProperty("$type", out var typeElement))
             {
                 var runtimeTypeName = typeElement.GetString();
                 if (!string.IsNullOrWhiteSpace(runtimeTypeName))

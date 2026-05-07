@@ -1,4 +1,4 @@
 {
-  "__type": "Orc.Serialization.Json.Tests.JsonSerializerFacts\u002BDog",
+  "$type": "Orc.Serialization.Json.Tests.JsonSerializerFacts\u002BDog",
   "Name": "Buddy"
 }

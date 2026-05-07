@@ -203,7 +203,7 @@ public partial class JsonSerializerFacts
                 UseTypeInfoConverter = true
             };
             var serializer = CreateSerializer(settings);
-            var json = "{\"__type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Dog\",\"Name\":\"Buddy\"}";
+            var json = "{\"$type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Dog\",\"Name\":\"Buddy\"}";
 
             using var stream = ToStream(json);
             var result = serializer.Deserialize<AbstractAnimal>(stream);
@@ -270,7 +270,7 @@ public partial class JsonSerializerFacts
                 UseTypeInfoConverter = true
             };
             var serializer = CreateSerializer(settings);
-            var json = "{\"__type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Dog\",\"__object\":{\"Name\":\"Buddy\"}}";
+            var json = "{\"$type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Dog\",\"__object\":{\"Name\":\"Buddy\"}}";
 
             using var stream = ToStream(json);
 
@@ -286,7 +286,7 @@ public partial class JsonSerializerFacts
                 UseTypeInfoConverter = true
             };
             var serializer = CreateSerializer(settings);
-            var json = "{\"__type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Cat\",\"Name\":\"Misty\",\"Lives\":9}";
+            var json = "{\"$type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Cat\",\"Name\":\"Misty\",\"Lives\":9}";
 
             using var stream = ToStream(json);
             var result = serializer.Deserialize<AbstractAnimal>(stream);
