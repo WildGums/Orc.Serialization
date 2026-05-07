@@ -158,7 +158,7 @@ public partial class JsonSerializerFacts
         }
 
         [Test]
-        public void Deserializes_Abstract_Type_Using_TypeInfoResolverChain()
+        public void TypeInfoResolverChain_Deserializes_Abstract_Type()
         {
             var settings = new JsonSerializerSettings();
             settings.TypeInfoResolverChain.Add(CreateAnimalPolymorphismResolver());
