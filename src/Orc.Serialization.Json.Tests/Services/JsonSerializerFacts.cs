@@ -1,8 +1,12 @@
 namespace Orc.Serialization.Json.Tests;
 
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using VerifyNUnit;
@@ -21,6 +25,15 @@ public partial class JsonSerializerFacts
         public string? Name { get; set; }
         public int Value { get; set; }
         public Status Status { get; set; }
+    }
+
+    private abstract class AbstractAnimal
+    {
+    }
+
+    private sealed class Dog : AbstractAnimal
+    {
+        public string? Name { get; set; }
     }
 
     private static IJsonSerializer CreateSerializer(JsonSerializerSettings? settings = null)
@@ -143,5 +156,95 @@ public partial class JsonSerializerFacts
             Assert.That(result.Value, Is.EqualTo(original.Value));
             Assert.That(result.Status, Is.EqualTo(original.Status));
         }
+
+        [Test]
+        public void Deserializes_Abstract_Type_Using_TypeInfoResolverChain()
+        {
+            var settings = new JsonSerializerSettings();
+            settings.TypeInfoResolverChain.Add(CreateAnimalPolymorphismResolver());
+            var serializer = CreateSerializer(settings);
+            var json = "{\"$type\":\"dog\",\"Name\":\"Buddy\"}";
+
+            using var stream = ToStream(json);
+            var result = serializer.Deserialize<AbstractAnimal>(stream);
+
+            Assert.That(result, Is.InstanceOf<Dog>());
+            Assert.That(((Dog)result!).Name, Is.EqualTo("Buddy"));
+        }
+    }
+
+    [TestFixture]
+    public class The_Serializer_Binder
+    {
+        [Test]
+        public void Allows_Explicitly_Allowed_Types()
+        {
+            var binder = new AllowedTypesSerializerBinder([typeof(SampleModel)]);
+
+            Assert.That(binder.IsTypeAllowed(typeof(SampleModel)), Is.True);
+        }
+
+        [Test]
+        public void Rejects_Types_That_Are_Not_Allowed()
+        {
+            var binder = new AllowedTypesSerializerBinder([typeof(SampleModel)]);
+
+            Assert.That(binder.IsTypeAllowed(typeof(Dog)), Is.False);
+        }
+
+        [Test]
+        public void Throws_When_Serializing_Disallowed_Type()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                SerializerBinder = new AllowedTypesSerializerBinder([typeof(SampleModel)])
+            };
+            var serializer = CreateSerializer(settings);
+
+            using var stream = new MemoryStream();
+
+            Assert.Throws<NotSupportedException>(() => serializer.Serialize(stream, new Dog { Name = "Buddy" }));
+        }
+
+        [Test]
+        public void Throws_When_Deserializing_Disallowed_Target_Type()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                SerializerBinder = new AllowedTypesSerializerBinder([typeof(SampleModel)])
+            };
+            var serializer = CreateSerializer(settings);
+            var json = "{\"Name\":\"Buddy\"}";
+
+            using var stream = ToStream(json);
+
+            Assert.Throws<NotSupportedException>(() => serializer.Deserialize(stream, typeof(Dog)));
+        }
+    }
+
+    private static IJsonTypeInfoResolver CreateAnimalPolymorphismResolver()
+    {
+        var resolver = new DefaultJsonTypeInfoResolver();
+        resolver.Modifiers.Add(ConfigureAnimalPolymorphism);
+        return resolver;
+    }
+
+    private static void ConfigureAnimalPolymorphism(JsonTypeInfo jsonTypeInfo)
+    {
+        if (jsonTypeInfo.Type != typeof(AbstractAnimal))
+        {
+            return;
+        }
+
+        jsonTypeInfo.PolymorphismOptions = new JsonPolymorphismOptions
+        {
+            TypeDiscriminatorPropertyName = "$type",
+            UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization,
+            IgnoreUnrecognizedTypeDiscriminators = false,
+            DerivedTypes =
+            {
+                new JsonDerivedType(typeof(Dog), "dog")
+            }
+        };
     }
 }
