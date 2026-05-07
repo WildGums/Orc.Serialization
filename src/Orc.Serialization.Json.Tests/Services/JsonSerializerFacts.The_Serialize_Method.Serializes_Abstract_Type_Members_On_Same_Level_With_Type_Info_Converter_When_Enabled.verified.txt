@@ -1,0 +1,5 @@
+{
+  "$type": "Orc.Serialization.Json.Tests.JsonSerializerFacts\u002BCat",
+  "Name": "Misty",
+  "Lives": 9
+}

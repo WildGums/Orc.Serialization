@@ -116,8 +116,8 @@ public partial class JsonSerializerFacts
             await Verifier.Verify(json);
         }
 
-        [Test]
-        public void Serializes_Abstract_Type_Members_On_Same_Level_With_Type_Info_Converter_When_Enabled()
+        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        public async Task Serializes_Abstract_Type_Members_On_Same_Level_With_Type_Info_Converter_When_Enabled()
         {
             var settings = new JsonSerializerSettings
             {
@@ -129,13 +129,9 @@ public partial class JsonSerializerFacts
             using var stream = new MemoryStream();
             serializer.Serialize(stream, model);
 
-            using var document = System.Text.Json.JsonDocument.Parse(stream.ToArray());
-            var rootElement = document.RootElement;
+            var json = Encoding.UTF8.GetString(stream.ToArray());
 
-            Assert.That(rootElement.GetProperty("__type").GetString(), Is.EqualTo(typeof(Cat).FullName));
-            Assert.That(rootElement.GetProperty(nameof(Cat.Name)).GetString(), Is.EqualTo("Misty"));
-            Assert.That(rootElement.GetProperty(nameof(Cat.Lives)).GetInt32(), Is.EqualTo(9));
-            Assert.That(rootElement.TryGetProperty("__object", out _), Is.False);
+            await Verifier.Verify(json);
         }
     }
 
@@ -242,7 +238,7 @@ public partial class JsonSerializerFacts
                 UseTypeInfoConverter = true
             };
             var serializer = CreateSerializer(settings);
-            var json = "{\"__type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Cat\",\"Name\":\"Misty\",\"Lives\":9}";
+            var json = "{\"$type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Cat\",\"Name\":\"Misty\",\"Lives\":9}";
 
             using var stream = ToStream(json);
             var result = serializer.Deserialize<AbstractAnimal>(stream);
