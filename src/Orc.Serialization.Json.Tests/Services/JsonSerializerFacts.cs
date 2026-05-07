@@ -115,6 +115,24 @@ public partial class JsonSerializerFacts
 
             await Verifier.Verify(json);
         }
+
+        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        public async Task Serializes_Abstract_Type_Members_On_Same_Level_With_Type_Info_Converter_When_Enabled()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                UseTypeInfoConverter = true
+            };
+            var serializer = CreateSerializer(settings);
+            AbstractAnimal model = new Cat { Name = "Misty", Lives = 9 };
+
+            using var stream = new MemoryStream();
+            serializer.Serialize(stream, model);
+
+            var json = Encoding.UTF8.GetString(stream.ToArray());
+
+            await Verifier.Verify(json);
+        }
     }
 
     [TestFixture]
@@ -210,6 +228,39 @@ public partial class JsonSerializerFacts
 
             Assert.That(result, Is.InstanceOf<Dog>());
             Assert.That(((Dog)result!).Name, Is.EqualTo("Buddy"));
+        }
+
+        [Test]
+        public void Deserializes_Abstract_Type_With_Multiple_Properties_With_Type_Info_Converter_When_Enabled()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                UseTypeInfoConverter = true
+            };
+            var serializer = CreateSerializer(settings);
+            var json = "{\"$type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Cat\",\"Name\":\"Misty\",\"Lives\":9}";
+
+            using var stream = ToStream(json);
+            var result = serializer.Deserialize<AbstractAnimal>(stream);
+
+            Assert.That(result, Is.InstanceOf<Cat>());
+            Assert.That(((Cat)result!).Name, Is.EqualTo("Misty"));
+            Assert.That(((Cat)result).Lives, Is.EqualTo(9));
+        }
+
+        [Test]
+        public void Throws_When_Deserializing_Abstract_Type_Without_Type_Info_With_Type_Info_Converter_When_Enabled()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                UseTypeInfoConverter = true
+            };
+            var serializer = CreateSerializer(settings);
+            var json = "{\"Name\":\"Buddy\"}";
+
+            using var stream = ToStream(json);
+
+            Assert.Throws<System.Text.Json.JsonException>(() => serializer.Deserialize<AbstractAnimal>(stream));
         }
     }
 
