@@ -98,10 +98,14 @@ public partial class JsonSerializerFacts
             await Verifier.Verify(json);
         }
 
-        [Test]
-        public void Serializes_Abstract_Type_With_Default_Type_Info_Converter()
+        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        public async Task Serializes_Abstract_Type_With_Type_Info_Converter_When_Enabled()
         {
-            var serializer = CreateSerializer();
+            var settings = new JsonSerializerSettings
+            {
+                UseTypeInfoConverter = true
+            };
+            var serializer = CreateSerializer(settings);
             AbstractAnimal model = new Dog { Name = "Buddy" };
 
             using var stream = new MemoryStream();
@@ -109,8 +113,7 @@ public partial class JsonSerializerFacts
 
             var json = Encoding.UTF8.GetString(stream.ToArray());
 
-            Assert.That(json, Does.Contain("\"__type\""));
-            Assert.That(json, Does.Contain("\"__object\""));
+            await Verifier.Verify(json);
         }
     }
 
@@ -193,9 +196,13 @@ public partial class JsonSerializerFacts
         }
 
         [Test]
-        public void Deserializes_Abstract_Type_With_Default_Type_Info_Converter()
+        public void Deserializes_Abstract_Type_With_Type_Info_Converter_When_Enabled()
         {
-            var serializer = CreateSerializer();
+            var settings = new JsonSerializerSettings
+            {
+                UseTypeInfoConverter = true
+            };
+            var serializer = CreateSerializer(settings);
             var json = "{\"__type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Dog\",\"__object\":{\"Name\":\"Buddy\"}}";
 
             using var stream = ToStream(json);
@@ -259,7 +266,8 @@ public partial class JsonSerializerFacts
         {
             var settings = new JsonSerializerSettings
             {
-                SerializerBinder = new AllowedTypesSerializerBinder([typeof(AbstractAnimal)])
+                SerializerBinder = new AllowedTypesSerializerBinder([typeof(AbstractAnimal)]),
+                UseTypeInfoConverter = true
             };
             var serializer = CreateSerializer(settings);
             var json = "{\"__type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Dog\",\"__object\":{\"Name\":\"Buddy\"}}";
@@ -274,7 +282,8 @@ public partial class JsonSerializerFacts
         {
             var settings = new JsonSerializerSettings
             {
-                SerializerBinder = new AllowedTypesSerializerBinder([typeof(AbstractAnimal), typeof(Cat)])
+                SerializerBinder = new AllowedTypesSerializerBinder([typeof(AbstractAnimal), typeof(Cat)]),
+                UseTypeInfoConverter = true
             };
             var serializer = CreateSerializer(settings);
             var json = "{\"__type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Cat\",\"__object\":{\"Name\":\"Misty\",\"Lives\":9}}";

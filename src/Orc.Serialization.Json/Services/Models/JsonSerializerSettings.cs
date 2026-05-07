@@ -28,4 +28,9 @@ public class JsonSerializerSettings
     /// Gets or sets the serializer binder that validates whether a type is allowed to be serialized or deserialized.
     /// </summary>
     public ISerializerBinder? SerializerBinder { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether runtime type info metadata should be written and read during (de)serialization.
+    /// </summary>
+    public bool UseTypeInfoConverter { get; set; } = false;
 }

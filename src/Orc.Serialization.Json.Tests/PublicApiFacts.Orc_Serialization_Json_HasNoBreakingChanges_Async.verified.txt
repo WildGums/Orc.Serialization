@@ -67,6 +67,7 @@ namespace Orc.Serialization.Json
         public bool SerializeEnumsAsStrings { get; set; }
         public Orc.Serialization.Json.ISerializerBinder? SerializerBinder { get; set; }
         public System.Collections.Generic.IList<System.Text.Json.Serialization.Metadata.IJsonTypeInfoResolver> TypeInfoResolverChain { get; }
+        public bool UseTypeInfoConverter { get; set; }
         public bool WriteIndented { get; set; }
     }
     public class TypeJsonConverter : System.Text.Json.Serialization.JsonConverter<System.Type?>

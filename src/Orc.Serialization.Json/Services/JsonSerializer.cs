@@ -26,7 +26,10 @@ public class JsonSerializer : IJsonSerializer
             _options.Converters.Insert(0, new SerializerBinderJsonConverterFactory(settings.SerializerBinder));
         }
 
-        _options.Converters.Add(new TypeInfoJsonConverterFactory());
+        if (settings.UseTypeInfoConverter)
+        {
+            _options.Converters.Add(new TypeInfoJsonConverterFactory());
+        }
 
         if (settings.SerializeEnumsAsStrings)
         {
