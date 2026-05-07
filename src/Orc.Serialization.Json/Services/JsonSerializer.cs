@@ -11,6 +11,8 @@ public class JsonSerializer : IJsonSerializer
 
     public JsonSerializer(JsonSerializerSettings settings)
     {
+        ArgumentNullException.ThrowIfNull(settings);
+
         _options = new JsonSerializerOptions
         {
             IncludeFields = settings.IncludeFields,
@@ -19,9 +21,24 @@ public class JsonSerializer : IJsonSerializer
             PropertyNameCaseInsensitive = settings.PropertyNameCaseInsensitive,
         };
 
+        if (settings.SerializerBinder is not null)
+        {
+            _options.Converters.Insert(0, new SerializerBinderJsonConverterFactory(settings.SerializerBinder));
+        }
+
+        if (settings.UseTypeInfoConverter)
+        {
+            _options.Converters.Add(new TypeInfoJsonConverterFactory());
+        }
+
         if (settings.SerializeEnumsAsStrings)
         {
             _options.Converters.Add(new JsonStringEnumConverter());
+        }
+
+        foreach (var typeInfoResolver in settings.TypeInfoResolverChain)
+        {
+            _options.TypeInfoResolverChain.Add(typeInfoResolver);
         }
     }
 
