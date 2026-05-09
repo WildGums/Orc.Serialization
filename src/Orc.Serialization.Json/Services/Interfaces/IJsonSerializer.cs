@@ -8,4 +8,6 @@ public interface IJsonSerializer
     object? Deserialize(Stream stream, Type targetType);
 
     void Serialize(Stream stream, object obj);
+
+    void Serialize<T>(Stream stream, T obj);
 }

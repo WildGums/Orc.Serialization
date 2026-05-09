@@ -43,11 +43,16 @@ internal sealed class TypeInfoJsonConverterFactory : JsonConverterFactory
                     throw new JsonException($"The type '{typeName}' cannot be resolved or is not assignable to '{typeof(T).FullName}'.");
                 }
 
-                var value = System.Text.Json.JsonSerializer.Deserialize(objectElement.GetRawText(), runtimeType, CreateOptionsWithoutTypeInfoConverter(options));
+                // The factory stays in options so any nested abstract/interface members trigger it again.
+                // The factory's CanConvert returns false for the concrete runtimeType, so no recursion happens here.
+                // UnmappedMemberHandling is set to Skip because the JSON contains $type which has no mapping on runtimeType.
+                var value = System.Text.Json.JsonSerializer.Deserialize(objectElement.GetRawText(), runtimeType, CloneWithSkipUnmapped(options));
                 return (T?)value;
             }
 
-            return System.Text.Json.JsonSerializer.Deserialize<T>(rootElement.GetRawText(), CreateOptionsWithoutTypeInfoConverter(options));
+            // No $type marker — defer to default STJ which throws "abstract types not supported" for interface/abstract T.
+            // Remove the factory so it doesn't re-enter for the same T.
+            return System.Text.Json.JsonSerializer.Deserialize<T>(rootElement.GetRawText(), CloneWithoutFactory(options));
         }
 
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
@@ -63,14 +68,17 @@ internal sealed class TypeInfoJsonConverterFactory : JsonConverterFactory
 
             if (!ShouldWriteTypeInfo(declaredType, runtimeType))
             {
-                System.Text.Json.JsonSerializer.Serialize(writer, value, CreateOptionsWithoutTypeInfoConverter(options));
+                System.Text.Json.JsonSerializer.Serialize(writer, value, CloneWithoutFactory(options));
                 return;
             }
 
             writer.WriteStartObject();
             writer.WriteString("$type", runtimeType.GetSafeFullName());
 
-            var temp = System.Text.Json.JsonSerializer.SerializeToNode(value, runtimeType, CreateOptionsWithoutTypeInfoConverter(options))!.AsObject();
+            // The factory stays in options so any nested abstract/interface members trigger it again.
+            // For typeof(object) (the only instantiable type the factory matches), strip the factory to avoid infinite recursion.
+            var nestedOptions = runtimeType == typeof(object) ? CloneWithoutFactory(options) : options;
+            var temp = System.Text.Json.JsonSerializer.SerializeToNode(value, runtimeType, nestedOptions)!.AsObject();
 
             foreach (var kvp in temp)
             {
@@ -114,19 +122,23 @@ internal sealed class TypeInfoJsonConverterFactory : JsonConverterFactory
             return !string.IsNullOrWhiteSpace(typeName);
         }
 
-        private static JsonSerializerOptions CreateOptionsWithoutTypeInfoConverter(JsonSerializerOptions options)
+        private static JsonSerializerOptions CloneWithSkipUnmapped(JsonSerializerOptions options)
         {
-            var clonedOptions = new JsonSerializerOptions(options)
+            return new JsonSerializerOptions(options)
             {
-                // Need to skip because of $type
                 UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip
             };
+        }
+
+        private static JsonSerializerOptions CloneWithoutFactory(JsonSerializerOptions options)
+        {
+            var clonedOptions = new JsonSerializerOptions(options);
 
             for (var i = clonedOptions.Converters.Count - 1; i >= 0; i--)
             {
-                if (clonedOptions.Converters[i] is TypeInfoJsonConverterFactory converter)
+                if (clonedOptions.Converters[i] is TypeInfoJsonConverterFactory)
                 {
-                    clonedOptions.Converters.Remove(converter);
+                    clonedOptions.Converters.RemoveAt(i);
                     break;
                 }
             }

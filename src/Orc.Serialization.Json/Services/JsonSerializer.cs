@@ -51,4 +51,9 @@ public class JsonSerializer : IJsonSerializer
     {
         System.Text.Json.JsonSerializer.Serialize(stream, obj, _options);
     }
+
+    public void Serialize<T>(Stream stream, T obj)
+    {
+        System.Text.Json.JsonSerializer.Serialize(stream, obj, _options);
+    }
 }
