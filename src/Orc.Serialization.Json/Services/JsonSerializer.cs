@@ -47,7 +47,17 @@ public class JsonSerializer : IJsonSerializer
         return System.Text.Json.JsonSerializer.Deserialize(stream, targetType, _options);
     }
 
+    public T? Deserialize<T>(Stream stream)
+    {
+        return System.Text.Json.JsonSerializer.Deserialize<T>(stream, _options);
+    }
+
     public void Serialize(Stream stream, object obj)
+    {
+        System.Text.Json.JsonSerializer.Serialize(stream, obj, _options);
+    }
+
+    public void Serialize<T>(Stream stream, T obj)
     {
         System.Text.Json.JsonSerializer.Serialize(stream, obj, _options);
     }

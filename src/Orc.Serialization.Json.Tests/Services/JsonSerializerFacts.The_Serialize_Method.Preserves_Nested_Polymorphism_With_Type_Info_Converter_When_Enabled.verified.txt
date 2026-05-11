@@ -1,0 +1,7 @@
+﻿{
+  "Owner": "Alice",
+  "Pet": {
+    "$type": "Orc.Serialization.Json.Tests.JsonSerializerFacts\u002BDog",
+    "Name": "Buddy"
+  }
+}

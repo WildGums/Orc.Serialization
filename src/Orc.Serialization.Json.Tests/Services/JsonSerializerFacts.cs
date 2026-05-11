@@ -41,6 +41,12 @@ public partial class JsonSerializerFacts
         public int Lives { get; set; }
     }
 
+    private sealed class AnimalContainer
+    {
+        public string? Owner { get; set; }
+        public AbstractAnimal? Pet { get; set; }
+    }
+
     private static IJsonSerializer CreateSerializer(JsonSerializerSettings? settings = null)
     {
         return new JsonSerializer(settings ?? new JsonSerializerSettings());
@@ -125,6 +131,28 @@ public partial class JsonSerializerFacts
             };
             var serializer = CreateSerializer(settings);
             AbstractAnimal model = new Cat { Name = "Misty", Lives = 9 };
+
+            using var stream = new MemoryStream();
+            serializer.Serialize(stream, model);
+
+            var json = Encoding.UTF8.GetString(stream.ToArray());
+
+            await Verifier.Verify(json);
+        }
+
+        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        public async Task Preserves_Nested_Polymorphism_With_Type_Info_Converter_When_Enabled()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                UseTypeInfoConverter = true
+            };
+            var serializer = CreateSerializer(settings);
+            var model = new AnimalContainer
+            {
+                Owner = "Alice",
+                Pet = new Dog { Name = "Buddy" }
+            };
 
             using var stream = new MemoryStream();
             serializer.Serialize(stream, model);
@@ -261,6 +289,33 @@ public partial class JsonSerializerFacts
             using var stream = ToStream(json);
 
             Assert.Throws<NotSupportedException>(() => serializer.Deserialize<AbstractAnimal>(stream));
+        }
+
+        [Test]
+        public void Roundtrips_Nested_Abstract_Member_With_Type_Info_Converter_Enabled()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                UseTypeInfoConverter = true
+            };
+            var serializer = CreateSerializer(settings);
+            var original = new AnimalContainer
+            {
+                Owner = "Alice",
+                Pet = new Cat { Name = "Misty", Lives = 9 }
+            };
+
+            using var stream = new MemoryStream();
+            serializer.Serialize(stream, original);
+            stream.Position = 0;
+
+            var result = serializer.Deserialize<AnimalContainer>(stream);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result!.Owner, Is.EqualTo("Alice"));
+            Assert.That(result.Pet, Is.InstanceOf<Cat>());
+            Assert.That(((Cat)result.Pet!).Name, Is.EqualTo("Misty"));
+            Assert.That(((Cat)result.Pet).Lives, Is.EqualTo(9));
         }
     }
 

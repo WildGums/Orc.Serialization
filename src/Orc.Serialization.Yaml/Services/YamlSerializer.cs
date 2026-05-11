@@ -45,6 +45,16 @@ public class YamlSerializer : IYamlSerializer
         return _innerDeserializer.Deserialize(textReader, targetType);
     }
 
+    public T? Deserialize<T>(Stream stream)
+    {
+        // Don't dispose, we don't own the stream
+#pragma warning disable IDISP001 // Dispose created
+        var textReader = new StreamReader(stream);
+#pragma warning restore IDISP001 // Dispose created
+
+        return _innerDeserializer.Deserialize<T>(textReader);
+    }
+
     public void Serialize(Stream stream, object obj)
     {
         // Don't dispose, we don't own the stream
@@ -53,6 +63,18 @@ public class YamlSerializer : IYamlSerializer
 #pragma warning restore IDISP001 // Dispose created
 
         _innerSerializer.Serialize(textWriter, obj);
+
+        textWriter.Flush();
+    }
+
+    public void Serialize<T>(Stream stream, T obj)
+    {
+        // Don't dispose, we don't own the stream
+#pragma warning disable IDISP001 // Dispose created
+        var textWriter = new StreamWriter(stream);
+#pragma warning restore IDISP001 // Dispose created
+
+        _innerSerializer.Serialize(textWriter, obj, typeof(T));
 
         textWriter.Flush();
     }
