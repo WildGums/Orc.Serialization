@@ -22,6 +22,7 @@ namespace Orc.Serialization.Json
     public interface IJsonSerializer
     {
         object? Deserialize(System.IO.Stream stream, System.Type targetType);
+        T? Deserialize<T>(System.IO.Stream stream);
         void Serialize(System.IO.Stream stream, object obj);
         void Serialize<T>(System.IO.Stream stream, T obj);
     }
@@ -44,6 +45,7 @@ namespace Orc.Serialization.Json
     {
         public JsonSerializer(Orc.Serialization.Json.JsonSerializerSettings settings) { }
         public object? Deserialize(System.IO.Stream stream, System.Type targetType) { }
+        public T? Deserialize<T>(System.IO.Stream stream) { }
         public void Serialize(System.IO.Stream stream, object obj) { }
         public void Serialize<T>(System.IO.Stream stream, T obj) { }
     }

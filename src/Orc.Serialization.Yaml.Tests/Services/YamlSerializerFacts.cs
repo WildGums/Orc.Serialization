@@ -23,6 +23,21 @@ public partial class YamlSerializerFacts
         public Status Status { get; set; }
     }
 
+    private abstract class AbstractAnimal
+    {
+    }
+
+    private sealed class Dog : AbstractAnimal
+    {
+        public string? Name { get; set; }
+    }
+
+    private sealed class AnimalContainer
+    {
+        public string? Owner { get; set; }
+        public AbstractAnimal? Pet { get; set; }
+    }
+
     private static IYamlSerializer CreateSerializer(YamlSerializerSettings? settings = null)
     {
         return new YamlSerializer(settings ?? new YamlSerializerSettings());
@@ -65,6 +80,38 @@ public partial class YamlSerializerFacts
             Assert.That(yaml, Does.Contain("name:"));
             Assert.That(yaml, Does.Contain("value:"));
             Assert.That(yaml, Does.Contain("status:"));
+        }
+
+        [Test]
+        public void Does_Not_Emit_Type_Tag_For_Concrete_Root_Via_NonGeneric()
+        {
+            var serializer = CreateSerializer();
+            var model = new SampleModel { Name = "Test", Value = 1, Status = Status.Active };
+
+            using var stream = new MemoryStream();
+            serializer.Serialize(stream, model);
+
+            var yaml = Encoding.UTF8.GetString(stream.ToArray());
+
+            // The non-generic overload should not emit a leading "!TypeName" tag for a concrete root.
+            // YamlDotNet uses runtimeType as declared when no explicit type is provided.
+            Assert.That(yaml, Does.Not.StartWith("!"));
+            Assert.That(yaml, Does.Not.Contain("!Orc.Serialization.Yaml.Tests"));
+        }
+
+        [Test]
+        public void Does_Not_Emit_Type_Tag_For_Concrete_Root_Via_Generic()
+        {
+            var serializer = CreateSerializer();
+            var model = new SampleModel { Name = "Test", Value = 1, Status = Status.Active };
+
+            using var stream = new MemoryStream();
+            serializer.Serialize<SampleModel>(stream, model);
+
+            var yaml = Encoding.UTF8.GetString(stream.ToArray());
+
+            Assert.That(yaml, Does.Not.StartWith("!"));
+            Assert.That(yaml, Does.Not.Contain("!Orc.Serialization.Yaml.Tests"));
         }
     }
 
@@ -114,6 +161,29 @@ public partial class YamlSerializerFacts
             Assert.That(result!.Name, Is.EqualTo(original.Name));
             Assert.That(result.Value, Is.EqualTo(original.Value));
             Assert.That(result.Status, Is.EqualTo(original.Status));
+        }
+
+        [Test]
+        public void Slices_Nested_Abstract_Member_With_Default_Settings()
+        {
+            // YamlDotNet's default configuration does not write a "!{TypeName}" tag for polymorphic members.
+            // The runtime subtype is silently dropped (sliced to the declared base type's members).
+            // This is the YAML wrapper's equivalent of JSON Bug 2, but with a different fix path:
+            // it requires configuring YamlDotNet with tag mappings (e.g. WithTypeDiscriminatingNodeDeserializer)
+            // or registering tag aliases. Out of scope for this PR — tracked separately.
+            var serializer = CreateSerializer();
+            var model = new AnimalContainer
+            {
+                Owner = "Alice",
+                Pet = new Dog { Name = "Buddy" }
+            };
+
+            using var stream = new MemoryStream();
+            serializer.Serialize(stream, model);
+
+            var yaml = Encoding.UTF8.GetString(stream.ToArray());
+
+            Assert.That(yaml, Does.Not.Contain("!"), "Flip this assertion if polymorphism support is added.");
         }
     }
 }
