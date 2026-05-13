@@ -12,36 +12,36 @@ using VerifyNUnit;
 
 public partial class JsonSerializerFacts
 {
-    private enum Status
+    public enum Status
     {
         Active,
         Inactive,
         Pending
     }
 
-    private class SampleModel
+    public class SampleModel
     {
         public string? Name { get; set; }
         public int Value { get; set; }
         public Status Status { get; set; }
     }
 
-    private abstract class AbstractAnimal
+    public abstract class AbstractAnimal
     {
     }
 
-    private sealed class Dog : AbstractAnimal
+    public sealed class Dog : AbstractAnimal
     {
         public string? Name { get; set; }
     }
 
-    private sealed class Cat : AbstractAnimal
+    public sealed class Cat : AbstractAnimal
     {
         public string? Name { get; set; }
         public int Lives { get; set; }
     }
 
-    private sealed class AnimalContainer
+    public sealed class AnimalContainer
     {
         public string? Owner { get; set; }
         public AbstractAnimal? Pet { get; set; }
