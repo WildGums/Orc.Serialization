@@ -35,6 +35,8 @@ public class JsonSerializerSettings
 
     public JsonObjectCreationHandling PreferredObjectCreationHandling { get; set; } = JsonObjectCreationHandling.Replace;
 
+    public List<JsonConverter> Converters { get; set; } = new List<JsonConverter>();
+
     /// <summary>
     /// Gets or sets a value indicating whether runtime type info metadata should be written and read during (de)serialization.
     /// </summary>

@@ -64,6 +64,7 @@ namespace Orc.Serialization.Json
     public class JsonSerializerSettings
     {
         public JsonSerializerSettings() { }
+        public System.Collections.Generic.List<System.Text.Json.Serialization.JsonConverter> Converters { get; set; }
         public System.Globalization.CultureInfo Culture { get; set; }
         public bool IncludeFields { get; set; }
         public int MaxDepth { get; set; }

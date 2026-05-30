@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Catel.Collections;
 
 public class JsonSerializer : IJsonSerializer
 {
@@ -42,6 +43,8 @@ public class JsonSerializer : IJsonSerializer
         {
             _options.TypeInfoResolverChain.Add(typeInfoResolver);
         }
+
+        _options.Converters.AddRange(settings.Converters);
     }
 
     public object? Deserialize(Stream stream, Type targetType)
