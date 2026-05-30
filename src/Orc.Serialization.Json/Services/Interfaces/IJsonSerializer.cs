@@ -12,4 +12,6 @@ public interface IJsonSerializer
     void Serialize(Stream stream, object obj);
 
     void Serialize<T>(Stream stream, T obj);
+
+    void PopulateObject(Stream stream, object target);
 }

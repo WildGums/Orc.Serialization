@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -61,5 +62,36 @@ public class JsonSerializer : IJsonSerializer
     public void Serialize<T>(Stream stream, T obj)
     {
         System.Text.Json.JsonSerializer.Serialize(stream, obj, _options);
+    }
+
+    public void PopulateObject(Stream stream, object target)
+    {
+        ArgumentNullException.ThrowIfNull(stream);
+        ArgumentNullException.ThrowIfNull(target);
+
+        using var document = JsonDocument.Parse(stream);
+        var root = document.RootElement;
+
+        if (root.ValueKind != JsonValueKind.Object)
+        {
+            return;
+        }
+
+        var type = target.GetType();
+        using var enumerator = root.EnumerateObject();
+        while (enumerator.MoveNext())
+        {
+            var jsonProperty = enumerator.Current;
+            var property = type.GetProperty(jsonProperty.Name,
+                BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+
+            if (property is null || !property.CanWrite)
+            {
+                continue;
+            }
+
+            var value = jsonProperty.Value.Deserialize(property.PropertyType, _options);
+            property.SetValue(target, value);
+        }
     }
 }

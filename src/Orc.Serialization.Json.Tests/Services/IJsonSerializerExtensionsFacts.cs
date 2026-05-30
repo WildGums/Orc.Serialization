@@ -126,4 +126,94 @@ public partial class JsonSerializerFacts
             Assert.That(secondItem.Tags![0].Priority, Is.EqualTo(4));
         }
     }
+
+    [TestFixture]
+    public class The_PopulateObjectFromString_Method
+    {
+        [Test]
+        public void Updates_Only_Properties_Present_In_Json()
+        {
+            var serializer = CreateSerializer();
+            var model = new SampleModel { Name = "John", Value = 10, Status = Status.Active };
+            var json = "{\"Name\":\"Jane\"}";
+
+            serializer.PopulateObjectFromString(json, model);
+
+            Assert.That(model.Name, Is.EqualTo("Jane"));
+            Assert.That(model.Value, Is.EqualTo(10));
+            Assert.That(model.Status, Is.EqualTo(Status.Active));
+        }
+
+        [Test]
+        public void Updates_Multiple_Properties_From_Json()
+        {
+            var serializer = CreateSerializer();
+            var model = new SampleModel { Name = "John", Value = 10, Status = Status.Active };
+            var json = "{\"Name\":\"Jane\",\"Value\":99}";
+
+            serializer.PopulateObjectFromString(json, model);
+
+            Assert.That(model.Name, Is.EqualTo("Jane"));
+            Assert.That(model.Value, Is.EqualTo(99));
+            Assert.That(model.Status, Is.EqualTo(Status.Active));
+        }
+
+        [Test]
+        public void Leaves_All_Properties_Intact_When_Json_Is_Empty_Object()
+        {
+            var serializer = CreateSerializer();
+            var model = new SampleModel { Name = "John", Value = 42, Status = Status.Pending };
+            var json = "{}";
+
+            serializer.PopulateObjectFromString(json, model);
+
+            Assert.That(model.Name, Is.EqualTo("John"));
+            Assert.That(model.Value, Is.EqualTo(42));
+            Assert.That(model.Status, Is.EqualTo(Status.Pending));
+        }
+
+        [Test]
+        public void Is_Case_Insensitive_For_Property_Names()
+        {
+            var serializer = CreateSerializer();
+            var model = new SampleModel { Name = "John", Value = 5, Status = Status.Active };
+            var json = "{\"name\":\"Doe\"}";
+
+            serializer.PopulateObjectFromString(json, model);
+
+            Assert.That(model.Name, Is.EqualTo("Doe"));
+            Assert.That(model.Value, Is.EqualTo(5));
+        }
+
+        [Test]
+        public void Matches_Issue_Example_Scenario()
+        {
+            var serializer = CreateSerializer();
+            var model = new SampleModel { Name = "John", Value = 1 };
+            var json = "{\"Value\":2}";
+
+            serializer.PopulateObjectFromString(json, model);
+
+            Assert.That(model.Name, Is.EqualTo("John"));
+            Assert.That(model.Value, Is.EqualTo(2));
+        }
+    }
+
+    [TestFixture]
+    public class The_PopulateObject_Method
+    {
+        [Test]
+        public void Updates_Only_Properties_Present_In_Stream()
+        {
+            var serializer = CreateSerializer();
+            var model = new SampleModel { Name = "John", Value = 10, Status = Status.Active };
+
+            using var stream = ToStream("{\"Value\":55}");
+            serializer.PopulateObject(stream, model);
+
+            Assert.That(model.Name, Is.EqualTo("John"));
+            Assert.That(model.Value, Is.EqualTo(55));
+            Assert.That(model.Status, Is.EqualTo(Status.Active));
+        }
+    }
 }

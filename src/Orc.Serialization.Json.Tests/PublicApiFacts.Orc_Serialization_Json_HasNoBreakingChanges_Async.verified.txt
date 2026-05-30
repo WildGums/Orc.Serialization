@@ -23,6 +23,7 @@ namespace Orc.Serialization.Json
     {
         object? Deserialize(System.IO.Stream stream, System.Type targetType);
         T? Deserialize<T>(System.IO.Stream stream);
+        void PopulateObject(System.IO.Stream stream, object target);
         void Serialize(System.IO.Stream stream, object obj);
         void Serialize<T>(System.IO.Stream stream, T obj);
     }
@@ -30,6 +31,10 @@ namespace Orc.Serialization.Json
     {
         public static T? Deserialize<T>(this Orc.Serialization.Json.IJsonSerializer jsonSerializer, System.IO.Stream stream) { }
         public static T? DeserializeFromString<T>(this Orc.Serialization.Json.IJsonSerializer jsonSerializer, string value) { }
+        public static void PopulateObject<T>(this Orc.Serialization.Json.IJsonSerializer jsonSerializer, System.IO.Stream stream, T target)
+            where T : class { }
+        public static void PopulateObjectFromString<T>(this Orc.Serialization.Json.IJsonSerializer jsonSerializer, string value, T target)
+            where T : class { }
         public static string SerializeToString<T>(this Orc.Serialization.Json.IJsonSerializer jsonSerializer, T instance) { }
     }
     public interface IJsonSerializerFactory
@@ -46,6 +51,7 @@ namespace Orc.Serialization.Json
         public JsonSerializer(Orc.Serialization.Json.JsonSerializerSettings settings) { }
         public object? Deserialize(System.IO.Stream stream, System.Type targetType) { }
         public T? Deserialize<T>(System.IO.Stream stream) { }
+        public void PopulateObject(System.IO.Stream stream, object target) { }
         public void Serialize(System.IO.Stream stream, object obj) { }
         public void Serialize<T>(System.IO.Stream stream, T obj) { }
     }
