@@ -1,6 +1,7 @@
 ﻿namespace Orc.Serialization.Json;
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.Json.Serialization.Metadata;
 
 public class JsonSerializerSettings
@@ -8,6 +9,8 @@ public class JsonSerializerSettings
     public JsonSerializerSettings()
     {
     }
+
+    public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
 
     public int MaxDepth { get; set; } = 0;
 

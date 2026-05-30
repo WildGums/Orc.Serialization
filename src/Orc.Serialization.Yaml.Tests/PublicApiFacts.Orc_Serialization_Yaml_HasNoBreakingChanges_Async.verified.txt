@@ -49,6 +49,7 @@ namespace Orc.Serialization.Yaml
     public class YamlSerializerSettings
     {
         public YamlSerializerSettings() { }
+        public System.Globalization.CultureInfo Culture { get; set; }
         public bool IncludeFields { get; set; }
     }
 }
