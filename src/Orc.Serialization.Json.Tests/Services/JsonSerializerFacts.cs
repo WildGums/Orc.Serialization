@@ -64,7 +64,13 @@ public partial class JsonSerializerFacts
         public async Task Serializes_Simple_Object_To_Json()
         {
             var serializer = CreateSerializer();
-            var model = new SampleModel { Name = "Test", Value = 42, Status = Status.Active };
+
+            var model = new SampleModel
+            {
+                Name = "Test",
+                Value = 42,
+                Status = Status.Active
+            };
 
             using var stream = new MemoryStream();
             serializer.Serialize(stream, model);
@@ -79,7 +85,13 @@ public partial class JsonSerializerFacts
         public async Task Serializes_Enum_As_String_By_Default()
         {
             var serializer = CreateSerializer();
-            var model = new SampleModel { Name = "Test", Value = 1, Status = Status.Inactive };
+
+            var model = new SampleModel
+            {
+                Name = "Test",
+                Value = 1,
+                Status = Status.Inactive
+            };
 
             using var stream = new MemoryStream();
             serializer.Serialize(stream, model);
@@ -92,9 +104,19 @@ public partial class JsonSerializerFacts
         [Test, MethodImpl(MethodImplOptions.NoInlining)]
         public async Task Serializes_Enum_As_String_When_SerializeEnumsAsStrings_Is_True()
         {
-            var settings = new JsonSerializerSettings { SerializeEnumsAsStrings = true };
+            var settings = new JsonSerializerSettings
+            {
+                SerializeEnumsAsStrings = true
+            };
+
             var serializer = CreateSerializer(settings);
-            var model = new SampleModel { Name = "Test", Value = 1, Status = Status.Pending };
+
+            var model = new SampleModel
+            {
+                Name = "Test",
+                Value = 1,
+                Status = Status.Pending
+            };
 
             using var stream = new MemoryStream();
             serializer.Serialize(stream, model);
@@ -111,8 +133,12 @@ public partial class JsonSerializerFacts
             {
                 UseTypeInfoConverter = true
             };
+
             var serializer = CreateSerializer(settings);
-            AbstractAnimal model = new Dog { Name = "Buddy" };
+            AbstractAnimal model = new Dog
+            {
+                Name = "Buddy"
+            };
 
             using var stream = new MemoryStream();
             serializer.Serialize(stream, model);
@@ -129,8 +155,13 @@ public partial class JsonSerializerFacts
             {
                 UseTypeInfoConverter = true
             };
+
             var serializer = CreateSerializer(settings);
-            AbstractAnimal model = new Cat { Name = "Misty", Lives = 9 };
+            AbstractAnimal model = new Cat
+            {
+                Name = "Misty",
+                Lives = 9
+            };
 
             using var stream = new MemoryStream();
             serializer.Serialize(stream, model);
@@ -147,11 +178,15 @@ public partial class JsonSerializerFacts
             {
                 UseTypeInfoConverter = true
             };
+
             var serializer = CreateSerializer(settings);
             var model = new AnimalContainer
             {
                 Owner = "Alice",
-                Pet = new Dog { Name = "Buddy" }
+                Pet = new Dog
+                {
+                    Name = "Buddy"
+                }
             };
 
             using var stream = new MemoryStream();
@@ -196,7 +231,11 @@ public partial class JsonSerializerFacts
         [Test]
         public void Deserializes_Enum_From_String_When_SerializeEnumsAsStrings_Is_True()
         {
-            var settings = new JsonSerializerSettings { SerializeEnumsAsStrings = true };
+            var settings = new JsonSerializerSettings
+            {
+                SerializeEnumsAsStrings = true
+            };
+
             var serializer = CreateSerializer(settings);
             var json = "{\"Name\":\"Test\",\"Value\":0,\"Status\":\"Inactive\"}";
 
@@ -210,9 +249,18 @@ public partial class JsonSerializerFacts
         [Test]
         public void Roundtrip_Enum_As_String()
         {
-            var settings = new JsonSerializerSettings { SerializeEnumsAsStrings = true };
+            var settings = new JsonSerializerSettings
+            {
+                SerializeEnumsAsStrings = true
+            };
+
             var serializer = CreateSerializer(settings);
-            var original = new SampleModel { Name = "Roundtrip", Value = 7, Status = Status.Active };
+            var original = new SampleModel
+            {
+                Name = "Roundtrip",
+                Value = 7,
+                Status = Status.Active
+            };
 
             using var stream = new MemoryStream();
             serializer.Serialize(stream, original);
@@ -231,6 +279,7 @@ public partial class JsonSerializerFacts
         {
             var settings = new JsonSerializerSettings();
             settings.TypeInfoResolverChain.Add(CreateAnimalPolymorphismResolver());
+
             var serializer = CreateSerializer(settings);
             var json = "{\"$type\":\"dog\",\"Name\":\"Buddy\"}";
 
@@ -248,6 +297,7 @@ public partial class JsonSerializerFacts
             {
                 UseTypeInfoConverter = true
             };
+
             var serializer = CreateSerializer(settings);
             var json = "{\"$type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Dog\",\"Name\":\"Buddy\"}";
 
@@ -265,6 +315,7 @@ public partial class JsonSerializerFacts
             {
                 UseTypeInfoConverter = true
             };
+
             var serializer = CreateSerializer(settings);
             var json = "{\"$type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Cat\",\"Name\":\"Misty\",\"Lives\":9}";
 
@@ -283,6 +334,7 @@ public partial class JsonSerializerFacts
             {
                 UseTypeInfoConverter = true
             };
+
             var serializer = CreateSerializer(settings);
             var json = "{\"Name\":\"Buddy\"}";
 
@@ -298,11 +350,16 @@ public partial class JsonSerializerFacts
             {
                 UseTypeInfoConverter = true
             };
+
             var serializer = CreateSerializer(settings);
             var original = new AnimalContainer
             {
                 Owner = "Alice",
-                Pet = new Cat { Name = "Misty", Lives = 9 }
+                Pet = new Cat
+                {
+                    Name = "Misty",
+                    Lives = 9
+                }
             };
 
             using var stream = new MemoryStream();
@@ -345,11 +402,15 @@ public partial class JsonSerializerFacts
             {
                 SerializerBinder = new AllowedTypesSerializerBinder([typeof(SampleModel)])
             };
+
             var serializer = CreateSerializer(settings);
 
             using var stream = new MemoryStream();
 
-            Assert.Throws<NotSupportedException>(() => serializer.Serialize(stream, new Dog { Name = "Buddy" }));
+            Assert.Throws<NotSupportedException>(() => serializer.Serialize(stream, new Dog
+            {
+                Name = "Buddy"
+            }));
         }
 
         [Test]
@@ -359,6 +420,7 @@ public partial class JsonSerializerFacts
             {
                 SerializerBinder = new AllowedTypesSerializerBinder([typeof(SampleModel)])
             };
+
             var serializer = CreateSerializer(settings);
             var json = "{\"Name\":\"Buddy\"}";
 
@@ -375,6 +437,7 @@ public partial class JsonSerializerFacts
                 SerializerBinder = new AllowedTypesSerializerBinder([typeof(AbstractAnimal)]),
                 UseTypeInfoConverter = true
             };
+
             var serializer = CreateSerializer(settings);
             var json = "{\"$type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Dog\",\"__object\":{\"Name\":\"Buddy\"}}";
 
@@ -391,6 +454,7 @@ public partial class JsonSerializerFacts
                 SerializerBinder = new AllowedTypesSerializerBinder([typeof(AbstractAnimal), typeof(Cat)]),
                 UseTypeInfoConverter = true
             };
+
             var serializer = CreateSerializer(settings);
             var json = "{\"$type\":\"Orc.Serialization.Json.Tests.JsonSerializerFacts+Cat\",\"Name\":\"Misty\",\"Lives\":9}";
 

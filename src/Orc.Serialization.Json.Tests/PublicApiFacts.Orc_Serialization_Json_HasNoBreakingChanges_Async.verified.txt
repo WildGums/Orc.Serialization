@@ -32,9 +32,9 @@ namespace Orc.Serialization.Json
         public static T? Deserialize<T>(this Orc.Serialization.Json.IJsonSerializer jsonSerializer, System.IO.Stream stream) { }
         public static T? DeserializeFromString<T>(this Orc.Serialization.Json.IJsonSerializer jsonSerializer, string value) { }
         public static void PopulateObject<T>(this Orc.Serialization.Json.IJsonSerializer jsonSerializer, System.IO.Stream stream, T target)
-            where T : class { }
+            where T :  class { }
         public static void PopulateObjectFromString<T>(this Orc.Serialization.Json.IJsonSerializer jsonSerializer, string value, T target)
-            where T : class { }
+            where T :  class { }
         public static string SerializeToString<T>(this Orc.Serialization.Json.IJsonSerializer jsonSerializer, T instance) { }
     }
     public interface IJsonSerializerFactory

@@ -1,4 +1,4 @@
-namespace Orc.Serialization.Json.Tests;
+﻿namespace Orc.Serialization.Json.Tests;
 
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -44,7 +44,11 @@ public partial class JsonSerializerFactoryFacts
         {
             var factory = new JsonSerializerFactory();
             var serializer = factory.CreateSerializer();
-            var data = new { Id = 1, Name = "Factory" };
+            var data = new
+            {
+                Id = 1,
+                Name = "Factory"
+            };
 
             using var stream = new MemoryStream();
             serializer.Serialize(stream, data);
