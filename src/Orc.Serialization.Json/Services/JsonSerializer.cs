@@ -19,6 +19,7 @@ public class JsonSerializer : IJsonSerializer
             MaxDepth = settings.MaxDepth,
             WriteIndented = settings.WriteIndented,
             PropertyNameCaseInsensitive = settings.PropertyNameCaseInsensitive,
+            PreferredObjectCreationHandling = settings.PreferredObjectCreationHandling
         };
 
         if (settings.SerializerBinder is not null)

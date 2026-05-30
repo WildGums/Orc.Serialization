@@ -61,6 +61,7 @@ namespace Orc.Serialization.Json
         public System.Globalization.CultureInfo Culture { get; set; }
         public bool IncludeFields { get; set; }
         public int MaxDepth { get; set; }
+        public System.Text.Json.Serialization.JsonObjectCreationHandling PreferredObjectCreationHandling { get; set; }
         public bool PropertyNameCaseInsensitive { get; set; }
         public bool SerializeEnumsAsStrings { get; set; }
         public Orc.Serialization.Json.ISerializerBinder? SerializerBinder { get; set; }

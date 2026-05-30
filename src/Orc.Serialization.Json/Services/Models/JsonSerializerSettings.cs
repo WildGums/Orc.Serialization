@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 
 public class JsonSerializerSettings
@@ -31,6 +32,8 @@ public class JsonSerializerSettings
     /// Gets or sets the serializer binder that validates whether a type is allowed to be serialized or deserialized.
     /// </summary>
     public ISerializerBinder? SerializerBinder { get; set; }
+
+    public JsonObjectCreationHandling PreferredObjectCreationHandling { get; set; } = JsonObjectCreationHandling.Replace;
 
     /// <summary>
     /// Gets or sets a value indicating whether runtime type info metadata should be written and read during (de)serialization.
