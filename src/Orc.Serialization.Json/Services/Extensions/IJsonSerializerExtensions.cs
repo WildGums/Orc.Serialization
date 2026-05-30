@@ -43,4 +43,33 @@ public static class IJsonSerializerExtensions
         jsonSerializer.Serialize(stream, instance!);
         return Encoding.UTF8.GetString(stream.GetBuffer(), 0, (int)stream.Length);
     }
+
+    /// <summary>
+    /// Populates the properties of an existing object from the specified stream containing JSON data.
+    /// Only properties present in the JSON are updated; all other properties remain unchanged.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to populate.</typeparam>
+    /// <param name="jsonSerializer">The JSON serializer.</param>
+    /// <param name="stream">The stream containing the JSON data.</param>
+    /// <param name="target">The existing object whose properties will be updated.</param>
+    public static void PopulateObject<T>(this IJsonSerializer jsonSerializer, Stream stream, T target)
+        where T : class
+    {
+        jsonSerializer.PopulateObject(stream, (object)target);
+    }
+
+    /// <summary>
+    /// Populates the properties of an existing object from a JSON string.
+    /// Only properties present in the JSON are updated; all other properties remain unchanged.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to populate.</typeparam>
+    /// <param name="jsonSerializer">The JSON serializer.</param>
+    /// <param name="value">The JSON string containing the properties to update.</param>
+    /// <param name="target">The existing object whose properties will be updated.</param>
+    public static void PopulateObjectFromString<T>(this IJsonSerializer jsonSerializer, string value, T target)
+        where T : class
+    {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(value));
+        jsonSerializer.PopulateObject(stream, (object)target);
+    }
 }
